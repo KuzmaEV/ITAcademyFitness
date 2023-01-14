@@ -35,7 +35,7 @@ services:
       - fitness_ntwrk
   user-service:
     build: user-service
-    image: fitness_user-service:1.0.7
+    image: fitness_user-service:1.0.12
     networks:
       - fitness_ntwrk
   audit-service:
@@ -51,7 +51,7 @@ services:
 
   proxy:
     build: proxy
-    image: fitness_proxy:1.0.4
+    image: fitness_proxy:1.0.7
     ports:
       - "80:80"
     networks:

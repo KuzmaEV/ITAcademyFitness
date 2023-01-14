@@ -3,13 +3,19 @@ package by.mk_jd2_92_22.userSecurity.services;
 import by.mk_jd2_92_22.userSecurity.dao.UserFullRepository;
 import by.mk_jd2_92_22.userSecurity.model.*;
 import by.mk_jd2_92_22.userSecurity.model.builder.MyUserBuilder;
+import by.mk_jd2_92_22.userSecurity.model.dto.AuditDTO;
 import by.mk_jd2_92_22.userSecurity.model.dto.LoginDTO;
+import by.mk_jd2_92_22.userSecurity.model.dto.Type;
 import by.mk_jd2_92_22.userSecurity.security.JwtProvider;
+import by.mk_jd2_92_22.userSecurity.services.api.IAccountService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -17,27 +23,29 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-public class AccountService {
+public class AccountService implements IAccountService {
 
     private final CustomUserDetailsService detailsService;
     private final JwtProvider jwtProvider;
     private final UserFullRepository dao;
     private final PasswordEncoder encoder;
     private final UserHolder holder;
+    private final RestTemplate restTemplate;
 
 
-    public AccountService(CustomUserDetailsService detailsService,
-                          JwtProvider jwtProvider,
-                          UserFullRepository dao,
-                          PasswordEncoder encoder,
-                          UserHolder holder) {
+    public AccountService(CustomUserDetailsService detailsService, JwtProvider jwtProvider,
+                          UserFullRepository dao, PasswordEncoder encoder, UserHolder holder,
+                          RestTemplate restTemplate) {
         this.detailsService = detailsService;
         this.jwtProvider = jwtProvider;
         this.dao = dao;
         this.encoder = encoder;
         this.holder = holder;
+        this.restTemplate = restTemplate;
     }
 
+
+    @Override
     @Transactional
     public void registration(LoginDTO item){
 
@@ -54,9 +62,32 @@ public class AccountService {
                 .setPassword(encoder.encode(item.getPassword()))
                 .build();
 
-        this.dao.save(user);
+
+        final UserFull saveUser = this.dao.save(user);
+
+
+        try {
+
+
+            final ResponseEntity<String> responseEntity = restTemplate
+                    .postForEntity("http://audit-service:8080/audit", new AuditDTO(saveUser.getUuid(),
+                            "User registration", Type.USER), String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Не удалось создать audit: " + e);
+        }
+
+        //TODO проверить исключения
+
+//        if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+//
+//                throw new IllegalArgumentException("Не удалось создать audit ");
+//            }
+
+
     }
 
+    @Override
     @Transactional
     public String login(LoginDTO dto){
 
@@ -69,6 +100,7 @@ public class AccountService {
         return jwtProvider.createToken(user.getUsername());
     }
 
+    @Override
     public UserMe me(){
 
         final UserDetails userDetails = holder.getUser();
