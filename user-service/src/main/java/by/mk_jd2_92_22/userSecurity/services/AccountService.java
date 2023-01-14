@@ -8,7 +8,7 @@ import by.mk_jd2_92_22.userSecurity.model.dto.LoginDTO;
 import by.mk_jd2_92_22.userSecurity.model.dto.Type;
 import by.mk_jd2_92_22.userSecurity.security.JwtProvider;
 import by.mk_jd2_92_22.userSecurity.services.api.IAccountService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +25,6 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class AccountService implements IAccountService {
 
-    private final CustomUserDetailsService detailsService;
     private final JwtProvider jwtProvider;
     private final UserFullRepository dao;
     private final PasswordEncoder encoder;
@@ -33,10 +32,9 @@ public class AccountService implements IAccountService {
     private final RestTemplate restTemplate;
 
 
-    public AccountService(CustomUserDetailsService detailsService, JwtProvider jwtProvider,
+    public AccountService(JwtProvider jwtProvider,
                           UserFullRepository dao, PasswordEncoder encoder, UserHolder holder,
                           RestTemplate restTemplate) {
-        this.detailsService = detailsService;
         this.jwtProvider = jwtProvider;
         this.dao = dao;
         this.encoder = encoder;
@@ -62,16 +60,42 @@ public class AccountService implements IAccountService {
                 .setPassword(encoder.encode(item.getPassword()))
                 .build();
 
+//TODO подтверждение регистрации через email
+        this.dao.save(user);
 
-        final UserFull saveUser = this.dao.save(user);
+
+    }
+
+    @Override
+    @Transactional
+    public String login(LoginDTO dto){
+
+
+        final UserFull user = this.dao.findByMail(dto.getMail()).orElseThrow(() ->
+                new IllegalStateException("Неверный логин или пароль"));
+
+        if(!encoder.matches(dto.getPassword(), user.getPassword())){
+            throw new IllegalStateException("Неверный логин или пароль");
+        }
+        final AuditDTO auditDTO = new AuditDTO(user.getUuid(), "User login", Type.USER);
+        final String url = "http://audit-service:8080/audit";
+        final String token = jwtProvider.createToken(user.getMail());
+//TODO Authentication with the RestTemplate
+
+        //TODO HttpEntity в отдельный класс
+        String tokenHead = "Bearer " + token;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+		headers.set("Authorization", tokenHead);
+        HttpEntity<AuditDTO> jwtEntity = new HttpEntity<>(auditDTO, headers);
 
 
         try {
-
-
             final ResponseEntity<String> responseEntity = restTemplate
-                    .postForEntity("http://audit-service:8080/audit", new AuditDTO(saveUser.getUuid(),
-                            "User registration", Type.USER), String.class);
+                    .exchange(url,
+                    HttpMethod.POST, jwtEntity, String.class);
+//                    .postForEntity(url, auditDTO, String.class);
         } catch (RestClientException e) {
             e.printStackTrace();
             throw new IllegalArgumentException("Не удалось создать audit: " + e);
@@ -84,20 +108,7 @@ public class AccountService implements IAccountService {
 //                throw new IllegalArgumentException("Не удалось создать audit ");
 //            }
 
-
-    }
-
-    @Override
-    @Transactional
-    public String login(LoginDTO dto){
-
-        final UserDetails user = detailsService.loadUserByUsername(dto.getMail());
-
-        if(!encoder.matches(dto.getPassword(), user.getPassword())){
-            throw new IllegalArgumentException("Пароль неверный");
-        }
-
-        return jwtProvider.createToken(user.getUsername());
+        return token;
     }
 
     @Override

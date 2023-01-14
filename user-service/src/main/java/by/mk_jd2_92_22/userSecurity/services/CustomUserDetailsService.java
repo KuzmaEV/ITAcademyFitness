@@ -13,6 +13,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserFullRepository dao;
 
+
     public CustomUserDetailsService(UserFullRepository dao) {
         this.dao = dao;
     }
@@ -23,6 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         UserFull user = dao.findByMail(mail).orElseThrow(() ->
         new UsernameNotFoundException("Unknown User: " + mail));
+
 
         return SecurityUser.fromUser(user);
     }

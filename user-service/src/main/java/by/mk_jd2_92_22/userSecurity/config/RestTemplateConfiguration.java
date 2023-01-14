@@ -14,3 +14,27 @@ public class RestTemplateConfiguration {
     }
 
 }
+
+
+
+//public class RestTemplateFactory
+//        implements FactoryBean<RestTemplate>, InitializingBean {
+//
+//    private RestTemplate restTemplate;
+//
+//    public RestTemplate getObject() {
+//        return restTemplate;
+//    }
+//    public Class<RestTemplate> getObjectType() {
+//        return RestTemplate.class;
+//    }
+//    public boolean isSingleton() {
+//        return true;
+//    }
+//
+//    public void afterPropertiesSet() {
+//        HttpHost host = new HttpHost("localhost", 8082, "http");
+//        restTemplate = new RestTemplate(
+//                new HttpComponentsClientHttpRequestFactoryBasicAuth(host));
+//    }
+//}

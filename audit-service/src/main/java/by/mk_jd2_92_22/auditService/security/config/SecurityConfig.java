@@ -56,7 +56,9 @@ public class SecurityConfig {
                 .and();
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST).authenticated()
+                .antMatchers(HttpMethod.POST)
+//                .permitAll()
+                .authenticated()
                 .anyRequest().hasRole(Role.ADMIN.name());
 
         http.addFilterBefore(
