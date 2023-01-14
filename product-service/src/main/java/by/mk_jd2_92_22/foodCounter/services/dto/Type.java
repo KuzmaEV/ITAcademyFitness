@@ -1,4 +1,4 @@
-package by.mk_jd2_92_22.foodCounter.model;
+package by.mk_jd2_92_22.foodCounter.services.dto;
 
 public enum Type {
     PRODUCT,

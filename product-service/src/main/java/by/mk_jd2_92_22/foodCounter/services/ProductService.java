@@ -50,7 +50,7 @@ public class ProductService implements IProductService {
         //TODO
 //                RestTemplate restTemplate = new RestTemplate();
 //         restTemplate
-//                .postForEntity("http://user-service:8080/api/v1/audit", new AuditDTO(product.getUuid(),
+//                .postForEntity("http://user-service:8080/api/v1/audit", new AuditDTO(user uuid,
 //                        "create product", Type.PRODUCT), String.class);
 
         return product;
