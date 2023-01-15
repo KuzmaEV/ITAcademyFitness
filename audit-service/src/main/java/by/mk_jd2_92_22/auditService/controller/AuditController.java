@@ -4,6 +4,7 @@ import by.mk_jd2_92_22.auditService.dto.AuditRequestDTO;
 import by.mk_jd2_92_22.auditService.dto.PageDTO;
 import by.mk_jd2_92_22.auditService.model.Audit;
 import by.mk_jd2_92_22.auditService.service.api.IAuditService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +34,11 @@ public class AuditController {
     }
 
     @PostMapping
-    public ResponseEntity<Audit> create(@Valid @RequestBody AuditRequestDTO dto){
+    public ResponseEntity<Audit> create(@Valid @RequestBody AuditRequestDTO dto,
+                                        @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
 
-        Audit audit = this.service.create(dto);
+
+        Audit audit = this.service.create(dto, token);
         return ResponseEntity.ok(audit);
     }
 }

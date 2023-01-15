@@ -11,6 +11,7 @@ import by.mk_jd2_92_22.auditService.service.api.IUserService;
 import by.mk_jd2_92_22.auditService.service.mappers.MapperPageDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,9 +47,9 @@ public class AuditService implements IAuditService {
 
     @Override
     @Transactional
-    public Audit create(AuditRequestDTO dto) {
+    public Audit create(AuditRequestDTO dto, HttpHeaders token) {
 
-        final UserAudit userAudit = userService.create(dto.getUser());
+        final UserAudit userAudit = userService.create(dto.getUser(), token);
 
         Audit audit = new Audit();
         audit.setUser(userAudit);

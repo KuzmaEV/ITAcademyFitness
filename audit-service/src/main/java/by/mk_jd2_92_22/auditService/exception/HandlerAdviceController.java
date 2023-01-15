@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +25,16 @@ public class HandlerAdviceController {
                         e.getMessage());
         }
 
-        @ExceptionHandler/*({ProductNotFoundException.class})*/
+        @ExceptionHandler/*({IllegalArgumentException.class, IOException.class})*/
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         public SingleErrorResponse singleErrorServer(IllegalArgumentException e) {
+                return new SingleErrorResponse(
+                        "error",
+                        e.getMessage());
+        }
+        @ExceptionHandler
+        @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+        public SingleErrorResponse singleErrorServer(IOException e) {
                 return new SingleErrorResponse(
                         "error",
                         e.getMessage());
