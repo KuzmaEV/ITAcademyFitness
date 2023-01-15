@@ -1,7 +1,7 @@
 package by.mk_jd2_92_22.userSecurity.services;
 
 
-import by.mk_jd2_92_22.userSecurity.dao.UserFullRepository;
+import by.mk_jd2_92_22.userSecurity.repositories.UserFullRepository;
 import by.mk_jd2_92_22.userSecurity.model.UserFull;
 import by.mk_jd2_92_22.userSecurity.model.UserMe;
 import by.mk_jd2_92_22.userSecurity.model.builder.MyUserBuilder;
