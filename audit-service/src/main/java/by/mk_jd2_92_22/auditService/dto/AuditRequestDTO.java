@@ -8,11 +8,11 @@ import java.util.UUID;
 
 public class AuditRequestDTO {
 
-    @NotNull
+    @NotNull(message = "UUID is mandatory")
     private UUID user;
-    @NotBlank
+    @NotBlank(message = "Text is mandatory")
     private String text;
-    @NotNull
+    @NotNull(message = "Type is mandatory")
     private Type type;
 
     public AuditRequestDTO() {

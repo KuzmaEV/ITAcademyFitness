@@ -30,7 +30,7 @@ public class UserService implements IUserService {
         String url = "http://user-service:8080/users/me";
 
 
-        //из строки делает HttpHeader
+        //из строки делает HttpHeaders
 //        String tokenHead = "Bearer " + token;
 //        HttpHeaders headers = new HttpHeaders();//Создаем HEADER
 //        headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);

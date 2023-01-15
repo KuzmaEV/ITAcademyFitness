@@ -1,51 +1,48 @@
 package by.mk_jd2_92_22.auditService.security.customDatail;
 
+import by.mk_jd2_92_22.auditService.service.util.CreateHeaderFromToken;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-//    private final RestTemplate restTemplate;
-//    private final ObjectMapper objectMapper;
-//
-//    public CustomUserDetailsService(RestTemplate restTemplate, ObjectMapper objectMapper) {
-//        this.restTemplate = restTemplate;
-//        this.objectMapper = objectMapper;
-//    }
+    private final RestTemplate restTemplate;
+    private final CreateHeaderFromToken createHeader;
+
+    public CustomUserDetailsService(RestTemplate restTemplate, CreateHeaderFromToken createHeader) {
+        this.restTemplate = restTemplate;
+        this.createHeader = createHeader;
+    }
 
 
     @Override
-    public UserDetails loadUserByUsername(String mail) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String token) throws UsernameNotFoundException {
 
-//        String userResourceUrl = "http://user-service:8080/api/v1/users/me";
-//
-//        ResponseEntity<String> responseEntity = restTemplate
-//                .getForEntity(userResourceUrl , String.class);
-//
-//        String userJson = responseEntity.getBody();
-//
-//        if (responseEntity.getStatusCode().equals(HttpStatus.OK)){
-//
-//            try {
-//                UserMe user = objectMapper.readValue(userJson, UserMe.class);
-//                return SecurityUser.fromUser(user);
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//                throw new IllegalArgumentException("Не удалось получить пользователя: " + e);
-//            }
-//
-//        }else {
-//            throw new IllegalArgumentException("Не удалось получить пользователя: " + userJson);
-//        }
+        final String url = "http://user-service:8080/users/me";
 
-        return SecurityUser.fromUser(new UserMe(UUID.fromString("03472117-a855-4a37-972e-a8d5976d021d"),
-                Role.USER,
-                Status.ACTIVATED));
+        final HttpHeaders headers = createHeader.create(token);
+        HttpEntity<String> jwtEntity = new HttpEntity<>(headers);
+
+
+        final ResponseEntity<UserMe> responseEntity = restTemplate
+                    .exchange(url,
+                            HttpMethod.GET, jwtEntity, UserMe.class);
+
+        final UserMe userMe = responseEntity.getBody();
+
+        if (userMe == null){
+            throw new IllegalArgumentException("Проблебы с user-service при получении пользователя для аудита");
+        }
+
+        return SecurityUser.fromUser(userMe);
     }
 
 

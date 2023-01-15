@@ -62,7 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
 //        }
 
         UserDetails userDetails = detailsService
-                .loadUserByUsername(jwtProvider.getUsername(token));
+                .loadUserByUsername(token);
 
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(
