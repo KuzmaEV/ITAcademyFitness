@@ -10,7 +10,7 @@ public interface IService<ENTITY, DTO> {
     ENTITY create(DTO item, HttpHeaders token);
     ENTITY get(UUID uuid);
     PageDTO<ENTITY> get(int page, int size);
-    void update(UUID uuid, LocalDateTime dtUpdate, DTO item);
+    void update(UUID uuid, LocalDateTime dtUpdate, DTO item, HttpHeaders token);
 
 
 }

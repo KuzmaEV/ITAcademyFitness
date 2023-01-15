@@ -32,13 +32,16 @@ public class UserService implements IUserService {
     private final UserMeMapper mapperUser;
     private final CreatingAudit creatingAudit;
     private final PageDTOMapper<UserMe> pageDTOMapper;
+    private final AccountService accountService;
 
     public UserService(UserFullRepository dao, UserMeMapper mapperUser,
-                       CreatingAudit creatingAudit, PageDTOMapper<UserMe> pageDTOMapper) {
+                       CreatingAudit creatingAudit, PageDTOMapper<UserMe> pageDTOMapper,
+                       AccountService accountService) {
         this.dao = dao;
         this.mapperUser = mapperUser;
         this.creatingAudit = creatingAudit;
         this.pageDTOMapper = pageDTOMapper;
+        this.accountService = accountService;
     }
 
 
@@ -63,7 +66,7 @@ public class UserService implements IUserService {
 
         final UserFull userFull = dao.save(user);
 
-        creatingAudit.create(userFull.getUuid(), "User creation", token);
+        creatingAudit.create(userFull.getUuid(), "new User created", token);
 
         return mapperUser.mapper(userFull);
     }
@@ -89,10 +92,14 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public void update(UUID uuid, LocalDateTime dtUpdate, AdminDTO item) {
+    public void update(UUID uuid, LocalDateTime dtUpdate, AdminDTO item, HttpHeaders token) {
 
         UserFull user = dao.findById(uuid).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
+
+        final UUID uuidAdmin = accountService.me().getUuid();
+        creatingAudit.create(uuidAdmin, "Update user: " + user.getMail(),
+                token);
 
         final LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
 
