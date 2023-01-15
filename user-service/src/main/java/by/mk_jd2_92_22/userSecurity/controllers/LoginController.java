@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class LoginController {
@@ -18,14 +20,14 @@ public class LoginController {
     }
 
     @PostMapping("/registration")
-    ResponseEntity<?> registration(@RequestBody LoginDTO dto){
+    ResponseEntity<?> registration(@Valid @RequestBody LoginDTO dto){
 
         service.registration(dto);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/login")
-    ResponseEntity<String> login(@RequestBody LoginDTO dto){
+    ResponseEntity<String> login(@Valid @RequestBody LoginDTO dto){
 
         return ResponseEntity.ok(service.login(dto));
 

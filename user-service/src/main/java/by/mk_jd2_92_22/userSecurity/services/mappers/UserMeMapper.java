@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public class UserMeMapper {
-    protected UserMe mapper(UserFull user){
+    public UserMe mapper(UserFull user){
 
         return new UserMe(user.getUuid(),
                 user.getDtCreate(),

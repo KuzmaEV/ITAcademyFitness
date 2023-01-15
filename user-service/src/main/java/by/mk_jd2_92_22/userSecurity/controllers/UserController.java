@@ -4,10 +4,12 @@ import by.mk_jd2_92_22.userSecurity.model.UserMe;
 import by.mk_jd2_92_22.userSecurity.model.dto.AdminDTO;
 import by.mk_jd2_92_22.userSecurity.model.dto.PageDTO;
 import by.mk_jd2_92_22.userSecurity.services.api.IUserService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -24,9 +26,9 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity<?> create(@RequestBody AdminDTO dto){
-        service.create(dto);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    ResponseEntity<UserMe> create(@Valid @RequestBody AdminDTO dto,
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
+        return ResponseEntity.ok(service.create(dto, token));
     }
 
 

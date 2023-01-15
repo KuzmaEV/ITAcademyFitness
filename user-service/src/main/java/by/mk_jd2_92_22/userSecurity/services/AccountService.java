@@ -8,6 +8,7 @@ import by.mk_jd2_92_22.userSecurity.model.dto.LoginDTO;
 import by.mk_jd2_92_22.userSecurity.model.dto.Type;
 import by.mk_jd2_92_22.userSecurity.security.JwtProvider;
 import by.mk_jd2_92_22.userSecurity.services.api.IAccountService;
+import by.mk_jd2_92_22.userSecurity.services.util.CreateHeaderFromToken;
 import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,16 +31,16 @@ public class AccountService implements IAccountService {
     private final PasswordEncoder encoder;
     private final UserHolder holder;
     private final RestTemplate restTemplate;
+    private final CreateHeaderFromToken createHeader;
 
-
-    public AccountService(JwtProvider jwtProvider,
-                          UserFullRepository dao, PasswordEncoder encoder, UserHolder holder,
-                          RestTemplate restTemplate) {
+    public AccountService(JwtProvider jwtProvider, UserFullRepository dao, PasswordEncoder encoder,
+                          UserHolder holder, RestTemplate restTemplate, CreateHeaderFromToken createHeader) {
         this.jwtProvider = jwtProvider;
         this.dao = dao;
         this.encoder = encoder;
         this.holder = holder;
         this.restTemplate = restTemplate;
+        this.createHeader = createHeader;
     }
 
 
@@ -71,23 +72,25 @@ public class AccountService implements IAccountService {
     public String login(LoginDTO dto){
 
 
+        //Получаем пользователя из базы
         final UserFull user = this.dao.findByMail(dto.getMail()).orElseThrow(() ->
                 new IllegalStateException("Неверный логин или пароль"));
 
+        //Проверяем пороль
         if(!encoder.matches(dto.getPassword(), user.getPassword())){
             throw new IllegalStateException("Неверный логин или пароль");
         }
-        final AuditDTO auditDTO = new AuditDTO(user.getUuid(), "User login", Type.USER);
-        final String url = "http://audit-service:8080/audit";
-        final String token = jwtProvider.createToken(user.getMail());
-//TODO Authentication with the RestTemplate
 
-        //TODO HttpEntity в отдельный класс
-        String tokenHead = "Bearer " + token;
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-		headers.set("Authorization", tokenHead);
+        //Формируем AuditDTO
+        final AuditDTO auditDTO = new AuditDTO(user.getUuid(), user.getRole().name() + " login", Type.USER);
+        final String url = "http://audit-service:8080/audit";
+
+        //Создаем токен
+        final String token = jwtProvider.createToken(user.getMail());
+
+        //Создаем хедар
+        final HttpHeaders headers = createHeader.create(token);
+
         HttpEntity<AuditDTO> jwtEntity = new HttpEntity<>(auditDTO, headers);
 
 
@@ -95,18 +98,10 @@ public class AccountService implements IAccountService {
             final ResponseEntity<String> responseEntity = restTemplate
                     .exchange(url,
                     HttpMethod.POST, jwtEntity, String.class);
-//                    .postForEntity(url, auditDTO, String.class);
         } catch (RestClientException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException("Не удалось создать audit: " + e);
+            throw new IllegalArgumentException("Не удалось создать audit: " + e.getMessage());
         }
-
-        //TODO проверить исключения
-
-//        if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
-//
-//                throw new IllegalArgumentException("Не удалось создать audit ");
-//            }
 
         return token;
     }
