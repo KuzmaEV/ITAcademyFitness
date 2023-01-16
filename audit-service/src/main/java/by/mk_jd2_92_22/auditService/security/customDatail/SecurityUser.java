@@ -69,10 +69,12 @@ public class SecurityUser implements UserDetails {
         return User.builder()
                 .username(user.getUuid().toString())
                 .password("2")
-//                .disabled()
+//                .disabled(user.getStatus().equals(Status.WAITING_ACTIVATION)
+                .disabled(!user.getStatus().equals(Status.ACTIVATED))
 //                .accountExpired()
 //                .credentialsExpired()
-//                .accountLocked()
+//                .accountLocked(user.getStatus().equals(Status.DEACTIVATED))
+
                 .roles(user.getRole().name())
                 .build();
 
