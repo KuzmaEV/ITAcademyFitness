@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,21 +34,27 @@ public class UserService implements IUserService {
     private final CreatingAudit creatingAudit;
     private final PageDTOMapper<UserMe> pageDTOMapper;
     private final AccountService accountService;
+    private final PasswordEncoder encoder;
 
-    public UserService(UserFullRepository dao, UserMeMapper mapperUser,
-                       CreatingAudit creatingAudit, PageDTOMapper<UserMe> pageDTOMapper,
-                       AccountService accountService) {
+    public UserService(UserFullRepository dao, UserMeMapper mapperUser, CreatingAudit creatingAudit,
+                       PageDTOMapper<UserMe> pageDTOMapper, AccountService accountService,
+                       PasswordEncoder encoder) {
         this.dao = dao;
         this.mapperUser = mapperUser;
         this.creatingAudit = creatingAudit;
         this.pageDTOMapper = pageDTOMapper;
         this.accountService = accountService;
+        this.encoder = encoder;
     }
 
 
     @Override
     @Transactional
     public UserMe create(AdminDTO item, HttpHeaders token) {
+
+        if (this.dao.existsByMail(item.getMail())){
+            throw new IllegalStateException("Пользователь с таким email уже существует");
+        }
 
         final LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
         final UUID uuid = UUID.randomUUID();
@@ -61,21 +68,21 @@ public class UserService implements IUserService {
                 .setNick(item.getNick())
                 .setRole(item.getRole())
                 .setStatus(item.getStatus())
-                .setPassword(item.getPassword())
+                .setPassword(this.encoder.encode(item.getPassword()))
                 .build();
 
         final UserFull userFull = dao.save(user);
 
-        creatingAudit.create(userFull.getUuid(), "new User created", token);
+        this.creatingAudit.create(userFull.getUuid(), "new User created", token);
 
-        return mapperUser.mapper(userFull);
+        return this.mapperUser.mapper(userFull);
     }
 
     @Override
     public UserMe get(UUID uuid) {
         final UserFull userFull = dao.findById(uuid).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
-        return mapperUser.mapper(userFull);
+        return this.mapperUser.mapper(userFull);
     }
 
     @Override
@@ -84,21 +91,21 @@ public class UserService implements IUserService {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserFull> pageUsers = dao.findAll(pageable);
 
-        List<UserMe> content = mapperUser.mapperList(pageUsers.getContent());
+        List<UserMe> content = this.mapperUser.mapperList(pageUsers.getContent());
 
 
-        return pageDTOMapper.mapper(pageUsers, content);
+        return this.pageDTOMapper.mapper(pageUsers, content);
     }
 
     @Override
     @Transactional
     public void update(UUID uuid, LocalDateTime dtUpdate, AdminDTO item, HttpHeaders token) {
 
-        UserFull user = dao.findById(uuid).orElseThrow(() ->
+        UserFull user = this.dao.findById(uuid).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
 
-        final UUID uuidAdmin = accountService.me().getUuid();
-        creatingAudit.create(uuidAdmin, "Update user: " + user.getMail(),
+        final UUID uuidAdmin = this.accountService.me().getUuid();
+        this.creatingAudit.create(uuidAdmin, "Update user: " + user.getMail(),
                 token);
 
         final LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
@@ -116,7 +123,7 @@ public class UserService implements IUserService {
         user.setStatus(item.getStatus());
         user.setPassword(item.getPassword());
 
-            dao.save(user);
+        this.dao.save(user);
 
     }
 }

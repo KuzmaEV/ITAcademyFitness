@@ -41,7 +41,7 @@ public class AccountService implements IAccountService {
     @Transactional
     public void registration(LoginDTO item){
 
-        if (dao.existsByEmail(item.getMail())){
+        if (this.dao.existsByMail(item.getMail())){
             throw new IllegalStateException("Пользователь с таким email уже существует");
         }
 
@@ -54,8 +54,8 @@ public class AccountService implements IAccountService {
                 .setMail(item.getMail())
                 .setNick(item.getNick())
                 .setRole(Role.USER)
-                .setStatus(Status.ACTIVATED)
-                .setPassword(encoder.encode(item.getPassword()))
+                .setStatus(Status.WAITING_ACTIVATION)
+                .setPassword(this.encoder.encode(item.getPassword()))
                 .build();
 
 //TODO подтверждение регистрации через email
@@ -74,13 +74,17 @@ public class AccountService implements IAccountService {
                 new IllegalStateException("Неверный логин или пароль"));
 
         //Проверяем пороль
-        if(!encoder.matches(dto.getPassword(), user.getPassword())){
+        if(!this.encoder.matches(dto.getPassword(), user.getPassword())){
             throw new IllegalStateException("Неверный логин или пароль");
         }
 
-        final String token = jwtProvider.createToken(user.getMail());
+        if (!user.getStatus().equals(Status.ACTIVATED)){
+            throw new IllegalStateException("Вход запрещен");
+        }
 
-        createAudit.create(user.getUuid(), user.getRole().name() + " login", token);
+        final String token = this.jwtProvider.createToken(user.getMail());
+
+        this.createAudit.create(user.getUuid(), user.getRole().name() + " login", token);
 
         return token;
     }
@@ -88,8 +92,8 @@ public class AccountService implements IAccountService {
     @Override
     public UserMe me(){
 
-        final UserDetails userDetails = holder.getUser();
-        final UserFull myUser = dao.findByMail(userDetails.getUsername()).orElseThrow(() ->
+        final UserDetails userDetails = this.holder.getUser();
+        final UserFull myUser = this.dao.findByMail(userDetails.getUsername()).orElseThrow(() ->
                 new UsernameNotFoundException("User не найден"));
 
         return new UserMe(myUser.getUuid(),
