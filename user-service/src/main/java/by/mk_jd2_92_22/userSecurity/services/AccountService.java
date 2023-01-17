@@ -1,5 +1,6 @@
 package by.mk_jd2_92_22.userSecurity.services;
 
+import by.mk_jd2_92_22.userSecurity.model.dto.RegistrationDTO;
 import by.mk_jd2_92_22.userSecurity.repositories.UserFullRepository;
 import by.mk_jd2_92_22.userSecurity.model.*;
 import by.mk_jd2_92_22.userSecurity.model.builder.MyUserBuilder;
@@ -39,7 +40,7 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional
-    public void registration(LoginDTO item){
+    public void registration(RegistrationDTO item){
 
         if (this.dao.existsByMail(item.getMail())){
             throw new IllegalStateException("Пользователь с таким email уже существует");

@@ -6,17 +6,13 @@ public class LoginDTO {
 
     @NotBlank(message = "Email is mandatory")
     private String mail;
-    @NotBlank(message = "Nick is mandatory")
-    private String nick;
+
     @NotBlank(message = "Password is mandatory")
     private String password;
 
+
     public String getMail() {
         return mail;
-    }
-
-    public String getNick() {
-        return nick;
     }
 
     public String getPassword() {
