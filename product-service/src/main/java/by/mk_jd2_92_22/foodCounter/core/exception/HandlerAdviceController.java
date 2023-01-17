@@ -1,6 +1,5 @@
-package by.mk_jd2_92_22.foodCounter.controllers;
+package by.mk_jd2_92_22.foodCounter.core.exception;
 
-import by.mk_jd2_92_22.foodCounter.core.exception.NotFoundException;
 import by.mk_jd2_92_22.foodCounter.core.exception.entity.ErrorForMultipleErrorResponse;
 import by.mk_jd2_92_22.foodCounter.core.exception.entity.MultipleErrorResponse;
 import by.mk_jd2_92_22.foodCounter.core.exception.entity.SingleErrorResponse;
