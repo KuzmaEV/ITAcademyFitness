@@ -70,7 +70,6 @@ public class AccountService implements IAccountService {
     public String login(LoginDTO dto){
 
 
-        //Получаем пользователя из базы
         final UserFull user = this.dao.findByMail(dto.getMail()).orElseThrow(() ->
                 new IllegalStateException("Неверный логин или пароль"));
 
