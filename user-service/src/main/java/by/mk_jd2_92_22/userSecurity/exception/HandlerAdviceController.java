@@ -8,6 +8,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,6 +30,14 @@ public class HandlerAdviceController {
         @ExceptionHandler
         @ResponseStatus(HttpStatus.BAD_REQUEST)
         public SingleErrorResponse jsonException(InvalidFormatException e) {
+                return new SingleErrorResponse(
+                        "error",
+                        e.getMessage());
+        }
+
+        @ExceptionHandler
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
+        public SingleErrorResponse jsonException(MissingServletRequestParameterException e) {
                 return new SingleErrorResponse(
                         "error",
                         e.getMessage());
