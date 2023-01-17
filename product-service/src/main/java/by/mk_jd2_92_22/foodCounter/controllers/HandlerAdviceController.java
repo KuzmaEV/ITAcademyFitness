@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,13 @@ public class HandlerAdviceController {
         @ExceptionHandler/*({ProductNotFoundException.class})*/
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         public SingleErrorResponse singleErrorServer(OptimisticLockingFailureException e) {
+                return new SingleErrorResponse(
+                        "error",
+                        e.getMessage());
+        }
+        @ExceptionHandler/*({ProductNotFoundException.class})*/
+        @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+        public SingleErrorResponse singleErrorServer(RestClientException e) {
                 return new SingleErrorResponse(
                         "error",
                         e.getMessage());

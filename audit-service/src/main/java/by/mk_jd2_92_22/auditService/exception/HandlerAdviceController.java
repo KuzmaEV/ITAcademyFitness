@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +36,14 @@ public class HandlerAdviceController {
         @ExceptionHandler
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         public SingleErrorResponse singleErrorServer(IOException e) {
+                return new SingleErrorResponse(
+                        "error",
+                        e.getMessage());
+        }
+
+        @ExceptionHandler/*({ProductNotFoundException.class})*/
+        @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+        public SingleErrorResponse singleErrorServer(RestClientException e) {
                 return new SingleErrorResponse(
                         "error",
                         e.getMessage());
