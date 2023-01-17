@@ -1,5 +1,6 @@
 package by.mk_jd2_92_22.foodCounter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -28,6 +29,7 @@ public class Recipe {
     @JoinColumn(name = "dish_uuid", referencedColumnName = "uuid")
     private List<Ingredient> ingredients;
 
+    @JsonIgnore
     @Column(name = "user_id")
     private UUID userId;
 

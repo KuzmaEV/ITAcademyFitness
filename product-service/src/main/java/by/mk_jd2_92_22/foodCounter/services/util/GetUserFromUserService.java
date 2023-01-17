@@ -68,7 +68,7 @@ public class GetUserFromUserService {
                 user.getDtCreate(), user.getDtUpdate());
     }
 
-    public UserProfile getUserProfileHolder(HttpHeaders token){
+    public UserProfile getUserProfile(HttpHeaders token){
 
         final UserMe userMe = this.get(token);
         return new UserProfile(userMe.getUuid(),

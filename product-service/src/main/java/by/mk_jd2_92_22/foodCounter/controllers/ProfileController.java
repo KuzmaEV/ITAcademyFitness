@@ -1,7 +1,6 @@
 package by.mk_jd2_92_22.foodCounter.controllers;
 
 import by.mk_jd2_92_22.foodCounter.services.api.IProfileService;
-import by.mk_jd2_92_22.foodCounter.model.Profile;
 import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.ProfileDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.ProfileResponseDTO;
@@ -29,9 +28,8 @@ public class ProfileController {
         return ResponseEntity.ok(service.create(dto, token));
     }
     @GetMapping("/{uuid_profile}")
-    public ResponseEntity<ProfileResponseDTO> get(@PathVariable("uuid_profile") UUID uuid,
-                                       @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
-        return ResponseEntity.ok(service.get(uuid, token));
+    public ResponseEntity<ProfileResponseDTO> get(@PathVariable("uuid_profile") UUID uuid){
+        return ResponseEntity.ok(service.get(uuid));
     }
 
     @GetMapping

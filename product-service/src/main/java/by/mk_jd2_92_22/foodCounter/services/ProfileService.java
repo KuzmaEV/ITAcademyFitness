@@ -70,13 +70,17 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ProfileResponseDTO  get(UUID uuid, HttpHeaders token) {
+    public ProfileResponseDTO  get(UUID profileId) {
 
-        final UserProfile userProfile = this.getUser.getUserProfileHolder(token);
+        final UserProfile userProfile = this.getUser.getUserProfileHolder();
 
 
-        final Profile profile = this.dao.findById(uuid).orElseThrow(() ->
+        final Profile profile = this.dao.findById(profileId).orElseThrow(() ->
                 new IllegalArgumentException("Profile is not found"));
+
+        if(!profile.getUser().equals(userProfile.getUuid())){
+            throw new IllegalStateException("Нельзя получит данные чужого пользователя");
+        }
 
         return this.converterUtil.convert(profile, userProfile);
     }

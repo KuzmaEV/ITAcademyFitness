@@ -1,5 +1,6 @@
 package by.mk_jd2_92_22.foodCounter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -35,11 +36,14 @@ public class JournalFood {
 
     private int weight;
 
+    @JsonIgnore
+    private UUID profile;
+
     public JournalFood() {
     }
 
-    public JournalFood(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate, LocalDateTime dtSupply,
-                       Product product, Recipe dish, int weight) {
+    public JournalFood(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate,
+                       LocalDateTime dtSupply, Product product, Recipe dish, int weight, UUID profile) {
         this.uuid = uuid;
         this.dtCreate = dtCreate;
         this.dtUpdate = dtUpdate;
@@ -47,15 +51,13 @@ public class JournalFood {
         this.product = product;
         this.dish = dish;
         this.weight = weight;
+        this.profile = profile;
     }
 
     public UUID getUuid() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
 
     public LocalDateTime getDtCreate() {
         return dtCreate;
@@ -103,9 +105,17 @@ public class JournalFood {
         this.dtSupply = dtSupply;
     }
 
+    public UUID getProfile() {
+        return profile;
+    }
+
+    public void setProfile(UUID profile) {
+        this.profile = profile;
+    }
+
     @Override
     public String toString() {
-        return "FoodDiary{" +
+        return "JournalFood{" +
                 "uuid=" + uuid +
                 ", dtCreate=" + dtCreate +
                 ", dtUpdate=" + dtUpdate +
@@ -113,6 +123,7 @@ public class JournalFood {
                 ", product=" + product +
                 ", dish=" + dish +
                 ", weight=" + weight +
+                ", profile=" + profile +
                 '}';
     }
 }

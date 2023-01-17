@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/journal/food")
+@RequestMapping("/profile")
 public class JournalFoodController {
 
     private final IJournalFoodService service;
@@ -24,41 +24,46 @@ public class JournalFoodController {
     }
 
 
-    @PostMapping
+    @PostMapping("/{uuid_profile}/journal/food")
     ResponseEntity<JournalFood> create(@Valid @RequestBody JournalFoodDTO dto,
+                                       @PathVariable("uuid_profile") UUID profile,
                                        @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
-        return ResponseEntity.ok(service.create(dto, token));
+        return ResponseEntity.ok(service.create(dto, profile, token));
     }
 
-    @GetMapping
+    @GetMapping("/{uuid_profile}/journal/food")
     ResponseEntity<PageDTO<JournalFood>> get(@RequestParam int page,
-                                @RequestParam int size){
-        return ResponseEntity.ok(service.get(page, size));
+                                             @RequestParam int size,
+                                             @PathVariable("uuid_profile") UUID profile){
+        return ResponseEntity.ok(service.get(page, size, profile));
     }
 
     @GetMapping
-    @RequestMapping("/{uuid}")
-    ResponseEntity<JournalFood> get(@PathVariable UUID uuid){
-        return ResponseEntity.ok(service.get(uuid));
+    @RequestMapping("/{uuid_profile}/journal/food/{uuid}")
+    ResponseEntity<JournalFood> get(@PathVariable UUID uuid,
+                                    @PathVariable("uuid_profile") UUID profile){
+        return ResponseEntity.ok(service.get(uuid, profile));
     }
 
 
-    @PutMapping("/{uuid}/dt_update/{dt_update}")
+    @PutMapping("/{uuid_profile}/journal/food/{uuid}/dt_update/{dt_update}")
     ResponseEntity<JournalFood> update(@PathVariable UUID uuid,
+                                       @PathVariable("uuid_profile") UUID profile,
                                        @PathVariable ("dt_update") LocalDateTime dtUpdate,
                                        @Valid @RequestBody JournalFoodDTO dto,
                                        @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
 
-        JournalFood product = service.update(uuid, dtUpdate, dto, token);
+        JournalFood product = service.update(uuid, dtUpdate, dto, profile, token);
         return ResponseEntity.ok(product);
     }
 
-    @DeleteMapping("/{uuid}/dt_update/{dt_update}")
+    @DeleteMapping("/{uuid_profile}/journal/food/{uuid}/dt_update/{dt_update}")
     ResponseEntity<?> delete(@PathVariable UUID uuid,
+                             @PathVariable("uuid_profile") UUID profile,
                              @PathVariable ("dt_update") LocalDateTime dtUpdate,
                              @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
 
-        service.delete(uuid, dtUpdate, token);
+        service.delete(uuid, dtUpdate, profile, token);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -1,5 +1,6 @@
 package by.mk_jd2_92_22.foodCounter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
@@ -34,6 +35,7 @@ public class Product {
 
     private int weight;
 
+    @JsonIgnore
     @Column(name = "user_id")
     private UUID userId;
 

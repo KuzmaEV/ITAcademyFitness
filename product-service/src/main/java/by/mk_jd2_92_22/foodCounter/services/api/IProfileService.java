@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface IProfileService {
 
     ProfileResponseDTO create(ProfileDTO item, HttpHeaders token);
-    ProfileResponseDTO  get(UUID uuid, HttpHeaders token);
+    ProfileResponseDTO  get(UUID uuid);
     PageDTO<ProfileResponseDTO> get(int page, int size);
     ProfileResponseDTO  update(UUID uuid, LocalDateTime dtUpdate, ProfileDTO item, HttpHeaders token);
     void delete(UUID uuid, LocalDateTime dtUpdate, HttpHeaders token);
