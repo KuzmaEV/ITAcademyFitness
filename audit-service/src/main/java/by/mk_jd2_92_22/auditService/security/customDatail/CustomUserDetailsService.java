@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,7 +43,14 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new IllegalArgumentException("Проблебы с user-service при получении пользователя для аудита");
         }
 
-        return SecurityUser.fromUser(userMe);
+        return User.builder().username(userMe.getMail())
+                .password("userMe.getPassword()")
+                .disabled(!userMe.getStatus().equals(Status.ACTIVATED))
+//                .accountExpired()
+//                .credentialsExpired()
+//                .accountLocked()
+                .roles(userMe.getRole().name())
+                .build();
     }
 
 

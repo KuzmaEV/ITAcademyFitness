@@ -1,8 +1,9 @@
 package by.mk_jd2_92_22.userSecurity.services;
 
+import by.mk_jd2_92_22.userSecurity.model.Status;
 import by.mk_jd2_92_22.userSecurity.repositories.UserFullRepository;
 import by.mk_jd2_92_22.userSecurity.model.UserFull;
-import by.mk_jd2_92_22.userSecurity.security.SecurityUser;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,7 +27,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         new UsernameNotFoundException("Unknown User: " + mail));
 
 
-        return SecurityUser.fromUser(user);
+        return User.builder().username(user.getMail())
+                .password(user.getPassword())
+                .disabled(!user.getStatus().equals(Status.ACTIVATED))
+//                .accountExpired()
+//                .credentialsExpired()
+//                .accountLocked()
+                .roles(user.getRole().name())
+                .build();
     }
 
 
