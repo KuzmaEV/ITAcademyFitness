@@ -4,13 +4,17 @@ import by.mk_jd2_92_22.foodCounter.core.exception.NotFoundException;
 import by.mk_jd2_92_22.foodCounter.repositories.IRecipeDao;
 import by.mk_jd2_92_22.foodCounter.model.Recipe;
 import by.mk_jd2_92_22.foodCounter.model.Ingredient;
+import by.mk_jd2_92_22.foodCounter.security.customDatail.UserHolder;
 import by.mk_jd2_92_22.foodCounter.services.api.IRecipeService;
 import by.mk_jd2_92_22.foodCounter.services.api.IIngredientService;
 import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.RecipeDTO;
+import by.mk_jd2_92_22.foodCounter.services.dto.Type;
 import by.mk_jd2_92_22.foodCounter.services.mappers.MapperPageDTO;
+import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,30 +31,42 @@ public class RecipeService implements IRecipeService {
     private final IRecipeDao dao;
     private final IIngredientService ingredientService;
     private final MapperPageDTO<Recipe> mapperPageDTO;
+    private final CreatingAudit creatingAudit;
+    private final UserHolder holder;
 
-    public RecipeService(IRecipeDao dao, IIngredientService ingredientService, MapperPageDTO<Recipe> mapperPageDTO) {
+    public RecipeService(IRecipeDao dao, IIngredientService ingredientService,
+                         MapperPageDTO<Recipe> mapperPageDTO, CreatingAudit creatingAudit,
+                         UserHolder holder) {
         this.dao = dao;
         this.ingredientService = ingredientService;
         this.mapperPageDTO = mapperPageDTO;
+        this.creatingAudit = creatingAudit;
+        this.holder = holder;
     }
 
     @Override
     @Transactional
-    public Recipe create(RecipeDTO item) {
+    public Recipe create(RecipeDTO item, HttpHeaders token) {
 
-        UUID uuidDish = UUID.randomUUID();
+        final String userId = this.holder.getUser().getUsername();
+        final String text = "new Recipe created";
 
-        LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+        final UUID uuidDish = UUID.randomUUID();
+        final LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+        final List<Ingredient> ingredients = ingredientService.create(item.getIngredients());
 
-        List<Ingredient> ingredients = ingredientService.create(item.getIngredients());
-
-        Recipe dish = new Recipe(uuidDish,
+        final Recipe dish = new Recipe(uuidDish,
                 time,
                 time,
                 item.getTitle(),
-                ingredients);
+                ingredients,
+                UUID.fromString(userId));
 
-        return dao.save(dish);
+        final Recipe recipe = this.dao.save(dish);
+
+        this.creatingAudit.create(UUID.fromString(userId), text, Type.RECIPE, token);
+
+        return recipe;
     }
 
     @Override
@@ -69,7 +85,10 @@ public class RecipeService implements IRecipeService {
 
     @Override
     @Transactional
-    public Recipe update(UUID uuid, LocalDateTime dtUpdate, RecipeDTO item) {
+    public Recipe update(UUID uuid, LocalDateTime dtUpdate, RecipeDTO item, HttpHeaders token) {
+
+        final String userId = this.holder.getUser().getUsername();
+        final String text = "Recipe updated";
 
         Recipe dish = this.dao.findById(uuid).orElseThrow(()->
                 new NotFoundException("Не удалось найти блюдо "));
@@ -90,12 +109,20 @@ public class RecipeService implements IRecipeService {
             throw new IllegalArgumentException("Не удалось обнавить, было кем-то изменино раньше." +
                     " Попробуйте еще раз!");
         }
-        return this.dao.save(dish);
+
+        final Recipe recipe = this.dao.save(dish);
+
+        this.creatingAudit.create(UUID.fromString(userId), text, Type.RECIPE, token);
+
+        return recipe;
     }
 
     @Override
     @Transactional
-    public void delete(UUID uuid, LocalDateTime dtUpdate) {
+    public void delete(UUID uuid, LocalDateTime dtUpdate, HttpHeaders token) {
+
+        final String userId = this.holder.getUser().getUsername();
+        final String text = "new Recipe created";
 
         Recipe dish = dao.findById(uuid).orElseThrow(()->
                 new NotFoundException("Не удалось найти блюдо "));
@@ -105,5 +132,7 @@ public class RecipeService implements IRecipeService {
             throw new IllegalArgumentException("Не удалось обнавить, было кемнто изменино раньше." +
                     " Попробуйте еще раз!");
         }
+
+        this.creatingAudit.create(UUID.fromString(userId), text, Type.PRODUCT, token);
     }
 }

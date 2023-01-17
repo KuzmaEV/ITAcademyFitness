@@ -19,7 +19,7 @@ public class ProfileBuilder {
     private double target;
     private ActivityType activityType;
     private ProfileSex sex;
-    private UUID user;
+    private UUID userId;
 
     private ProfileBuilder() {
     }
@@ -105,12 +105,12 @@ public class ProfileBuilder {
         return this;
     }
 
-    public UUID getUser() {
-        return user;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public ProfileBuilder setUser(UUID user) {
-        this.user = user;
+    public ProfileBuilder setUserId(UUID userId) {
+        this.userId = userId;
         return this;
     }
 
@@ -120,6 +120,6 @@ public class ProfileBuilder {
 
     public Profile build(){
         return new Profile(uuid, dtCreate, dtUpdate, height, weight, dtBirthday, target,
-                activityType, sex, user);
+                activityType, sex, userId);
     }
 }

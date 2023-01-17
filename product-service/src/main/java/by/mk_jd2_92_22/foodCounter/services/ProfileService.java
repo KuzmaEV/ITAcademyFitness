@@ -5,8 +5,17 @@ import by.mk_jd2_92_22.foodCounter.repositories.ProfileRepository;
 import by.mk_jd2_92_22.foodCounter.model.Profile;
 import by.mk_jd2_92_22.foodCounter.model.UserProfile;
 import by.mk_jd2_92_22.foodCounter.services.api.IProfileService;
+import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.ProfileDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.ProfileResponseDTO;
+import by.mk_jd2_92_22.foodCounter.services.dto.Type;
+import by.mk_jd2_92_22.foodCounter.services.util.ConverterUtil;
+import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
+import by.mk_jd2_92_22.foodCounter.services.util.GetUserFromUserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,68 +28,88 @@ import java.util.UUID;
 public class ProfileService implements IProfileService {
 
     private final ProfileRepository dao;
+    private final GetUserFromUserService getUser;
+    private final CreatingAudit creatingAudit;
+    private final ConverterUtil converterUtil;
 
-    public ProfileService(ProfileRepository dao) {
+    public ProfileService(ProfileRepository dao, GetUserFromUserService getUser,
+                          CreatingAudit creatingAudit, ConverterUtil converterUtil) {
         this.dao = dao;
+        this.getUser = getUser;
+        this.creatingAudit = creatingAudit;
+        this.converterUtil = converterUtil;
     }
+
 
     @Override
     @Transactional
-    public Profile create(ProfileDTO item) {
+    public ProfileResponseDTO create(ProfileDTO item, HttpHeaders token) {
 
-        UUID user = UUID.randomUUID();//TODO достать из токена
+        final String text = "new Profile created";
 
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+        final UserProfile userProfile = this.getUser.getUserProfileHolder();
+        final LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
 
         Profile profile = ProfileBuilder.create().setUuid(UUID.randomUUID())
                 .setDtCreate(now)
-                .setDtCreate(now)
+                .setDtUpdate(now)
                 .setWeight(item.getWeight())
                 .setHeight(item.getHeight())
                 .setTarget(item.getTarget())
                 .setDtBirthday(item.getDtBirthday())
                 .setActivityType(item.getActivityType())
                 .setSex(item.getSex())
-                .setUser(user)
+                .setUserId(userProfile.getUuid())
                 .build();
 
-        return dao.save(profile);
+        final Profile newProfile = this.dao.save(profile);
+
+        this.creatingAudit.create(userProfile.getUuid(), text, Type.PROFILE, token);
+
+        return this.converterUtil.convert(newProfile, userProfile);
     }
 
     @Override
-    public ProfileResponseDTO get(UUID uuid) {
+    public ProfileResponseDTO  get(UUID uuid, HttpHeaders token) {
+
+        final UserProfile userProfile = this.getUser.getUserProfileHolder(token);
 
 
-        Profile profile = dao.findById(uuid).orElseThrow(() ->
+        final Profile profile = this.dao.findById(uuid).orElseThrow(() ->
                 new IllegalArgumentException("Profile is not found"));
 
-        //TODO restTemplate get from user-service
-        UserProfile userProfile = new UserProfile();
-        userProfile.setUuid(profile.getUuid());
-        userProfile.setDtCreate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
-        userProfile.setDtUpdate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+        return this.converterUtil.convert(profile, userProfile);
+    }
 
-        return new ProfileResponseDTO(profile.getUuid(),
-                profile.getDtCreate(),
-                profile.getDtUpdate(),
-                profile.getHeight(),
-                profile.getWeight(),
-                profile.getDtBirthday(),
-                profile.getTarget(),
-                profile.getActivityType(),
-                profile.getSex(),
-                userProfile);
+    @Override
+    public PageDTO<ProfileResponseDTO> get(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        final UserProfile userProfile = this.getUser.getUserProfileHolder();
+        final Page<Profile> profilePage = this.dao.findAllByUser(pageable,userProfile.getUuid());
+
+        return this.converterUtil.convert(profilePage, userProfile);
     }
 
     @Override
     @Transactional
-    public Profile update(UUID uuid, LocalDateTime dtUpdate, ProfileDTO item) {
+    public ProfileResponseDTO  update(UUID uuid, LocalDateTime dtUpdate, ProfileDTO item, HttpHeaders token) {
 
-        Profile profile = dao.findById(uuid).orElseThrow(() ->
+        final String text = "Profile updated";
+
+        final UserProfile userProfile = this.getUser.getUserProfileHolder();
+
+        Profile profile = this.dao.findById(uuid).orElseThrow(() ->
                 new IllegalArgumentException("Profile is not found"));
 
+        if (!userProfile.getUuid().equals(profile.getUser())){
+            throw new IllegalStateException("Нельзя редоктировать чужие профили");
+        }
+
         if (!profile.getDtUpdate().isEqual(dtUpdate)){
-            throw new IllegalArgumentException("wasn't update, try again");
+            throw new IllegalArgumentException("Не удалось обнавить, было кем-то изменино раньше." +
+                    " Попробуйте еще раз!");
         }
 
         profile.setWeight(item.getWeight());
@@ -90,21 +119,36 @@ public class ProfileService implements IProfileService {
         profile.setActivityType(item.getActivityType());
         profile.setSex(item.getSex());
 
-        return dao.save(profile);
+
+        Profile profileUpdated = this.dao.save(profile);
+
+        this.creatingAudit.create(profileUpdated.getUser(), text, Type.PROFILE, token);
+
+        return this.converterUtil.convert(profileUpdated, userProfile);
     }
 
     @Override
     @Transactional
-    public void delete(UUID uuid, LocalDateTime dtUpdate) {
+    public void delete(UUID uuid, LocalDateTime dtUpdate, HttpHeaders token) {
 
-        Profile profile = dao.findById(uuid).orElseThrow(() ->
+        final String text = "Profile deleted";
+        final UserProfile userProfileHolder = this.getUser.getUserProfileHolder();
+
+        Profile profile = this.dao.findById(uuid).orElseThrow(() ->
                 new IllegalArgumentException("Profile is not found"));
 
-        if (!profile.getDtUpdate().isEqual(dtUpdate)){
-            throw new IllegalArgumentException("wasn't delete, try again");
+        if (!profile.getUser().equals(userProfileHolder.getUuid())){
+            throw new IllegalStateException("Нельзя удалять чужие профили");
         }
 
-        dao.delete(profile);
+        if (!profile.getDtUpdate().isEqual(dtUpdate)){
+            throw new IllegalArgumentException("Не удалось удалить, было кем-то изменино раньше." +
+                    " Попробуйте еще раз!");
+        }
+
+        this.dao.delete(profile);
+
+        this.creatingAudit.create(profile.getUser(), text, Type.PROFILE, token);
 
     }
 

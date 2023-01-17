@@ -4,11 +4,14 @@ import by.mk_jd2_92_22.foodCounter.core.builder.ProductBuilder;
 import by.mk_jd2_92_22.foodCounter.core.exception.NotFoundException;
 import by.mk_jd2_92_22.foodCounter.repositories.IProductDao;
 import by.mk_jd2_92_22.foodCounter.model.Product;
+import by.mk_jd2_92_22.foodCounter.security.customDatail.UserHolder;
 import by.mk_jd2_92_22.foodCounter.services.api.IProductService;
 import by.mk_jd2_92_22.foodCounter.services.dto.*;
 import by.mk_jd2_92_22.foodCounter.services.mappers.MapperPageDTO;
+import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +25,25 @@ public class ProductService implements IProductService {
 
     private final IProductDao dao;
     private final MapperPageDTO<Product> mapperPageDTO;
+    private final UserHolder holder;
+    private final CreatingAudit creatingAudit;
 
-    public ProductService(IProductDao dao, MapperPageDTO<Product> mapperPageDTO) {
+    public ProductService(IProductDao dao, MapperPageDTO<Product> mapperPageDTO,
+                          UserHolder holder, CreatingAudit creatingAudit) {
         this.dao = dao;
         this.mapperPageDTO = mapperPageDTO;
+        this.holder = holder;
+        this.creatingAudit = creatingAudit;
     }
 
     @Override
     @Transactional
-    public Product create(ProductDTO item) {
+    public Product create(ProductDTO item, HttpHeaders token) {
 
         UUID uuid = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+        final String userId = this.holder.getUser().getUsername();
+        final String text = "new product Created";
 
         final Product product = dao.save(ProductBuilder.create()
                 .setUuid(uuid)
@@ -45,13 +55,10 @@ public class ProductService implements IProductService {
                 .setFats(item.getFats())
                 .setCarbohydrates(item.getCarbohydrates())
                 .setWeight(item.getWeight())
+                .setUserId(UUID.fromString(userId))
                 .build());
 
-        //TODO
-//                RestTemplate restTemplate = new RestTemplate();
-//         restTemplate
-//                .postForEntity("http://user-service:8080/api/v1/audit", new AuditDTO(user uuid,
-//                        "create product", Type.PRODUCT), String.class);
+        this.creatingAudit.create(UUID.fromString(userId), text, Type.PRODUCT, token);
 
         return product;
     }
@@ -71,7 +78,10 @@ public class ProductService implements IProductService {
 
     @Override
     @Transactional
-    public Product update(UUID uuid, LocalDateTime dtUpdate, ProductDTO item) {
+    public Product update(UUID uuid, LocalDateTime dtUpdate, ProductDTO item, HttpHeaders token) {
+
+        final String userId = this.holder.getUser().getUsername();
+        final String text = "Product updated";
 
         Product product = dao.findById(uuid).orElseThrow(()->
                 new NotFoundException("Не удалось найти продукт "));
@@ -89,12 +99,17 @@ public class ProductService implements IProductService {
                     " Попробуйте еще раз!");
         }
 
+        this.creatingAudit.create(UUID.fromString(userId), text, Type.PRODUCT, token);
+
         return dao.save(product);
     }
 
     @Override
     @Transactional
-    public void delete(UUID uuid, LocalDateTime dtUpdate) {
+    public void delete(UUID uuid, LocalDateTime dtUpdate, HttpHeaders token) {
+
+        final String userId = this.holder.getUser().getUsername();
+        final String text = "Product deleted";
 
         Product product = dao.findById(uuid).orElseThrow(()->
                 new NotFoundException("Не удалось найти продукт "));
@@ -105,6 +120,8 @@ public class ProductService implements IProductService {
             throw new IllegalArgumentException("Не удалось обнавить, было кемнто изменино раньше." +
                     " Попробуйте еще раз!");
         }
+
+        this.creatingAudit.create(UUID.fromString(userId), text, Type.PRODUCT, token);
 
     }
 }

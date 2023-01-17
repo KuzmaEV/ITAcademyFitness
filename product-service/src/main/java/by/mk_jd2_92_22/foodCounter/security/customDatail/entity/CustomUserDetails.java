@@ -1,31 +1,35 @@
-package by.mk_jd2_92_22.foodCounter.security.customDatail;
+package by.mk_jd2_92_22.foodCounter.security.customDatail.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
-public class SecurityUser implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private final String username;
     private final String password;
     private final List<SimpleGrantedAuthority> authorities;
     private final boolean isActive;
 
+    private final LocalDateTime dtCreate;
+    private final LocalDateTime dtUpdate;
+
 //    private final UUID uuid_user;
 
-    public SecurityUser(String username, String password, List<SimpleGrantedAuthority> authorities, boolean isActive, UUID uuid_user) {
+
+    public CustomUserDetails(String username, String password, List<SimpleGrantedAuthority> authorities,
+                             boolean isActive, LocalDateTime dtCreate, LocalDateTime dtUpdate) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
         this.isActive = isActive;
-//        this.uuid_user = uuid_user;
+        this.dtCreate = dtCreate;
+        this.dtUpdate = dtUpdate;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -62,27 +66,16 @@ public class SecurityUser implements UserDetails {
         return isActive;
     }
 
-
-
-    public static UserDetails fromUser(UserMe user){
-
-        return User.builder()
-                .username(user.getUuid().toString())
-                .password("222")
-//                .disabled()
-//                .accountExpired()
-//                .credentialsExpired()
-//                .accountLocked()
-                .roles(user.getRole().name())
-                .build();
-
-//        return new User(user.getMail(), user.getPassword(),
-//                user.getStatus().equals(Status.ACTIVATED),
-//                user.getStatus().equals(Status.ACTIVATED),
-//                user.getStatus().equals(Status.ACTIVATED),
-//                user.getStatus().equals(Status.ACTIVATED),
-//                user.getRole().getAuthorities());
+    public boolean isActive() {
+        return isActive;
     }
 
+    public LocalDateTime getDtCreate() {
+        return dtCreate;
+    }
+
+    public LocalDateTime getDtUpdate() {
+        return dtUpdate;
+    }
 
 }

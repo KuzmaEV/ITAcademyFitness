@@ -2,22 +2,30 @@ package by.mk_jd2_92_22.foodCounter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserProfile {
 
-//    @Id
+    @Id
     private UUID uuid;
 
-//    @Column(name = "dt_create")
+    @Column(name = "dt_create")
     @JsonProperty("dt_create")
     private LocalDateTime dtCreate;
-//    @Column(name = "dt_update")
+    @Column(name = "dt_update")
     @JsonProperty("dt_update")
     private LocalDateTime dtUpdate;
 
     public UserProfile() {
+    }
+
+    public UserProfile(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate) {
+        this.uuid = uuid;
+        this.dtCreate = dtCreate;
+        this.dtUpdate = dtUpdate;
     }
 
     public UUID getUuid() {
@@ -42,6 +50,15 @@ public class UserProfile {
 
     public void setDtUpdate(LocalDateTime dtUpdate) {
         this.dtUpdate = dtUpdate;
+    }
+
+    @Override
+    public String toString() {
+        return "UserProfile{" +
+                "uuid=" + uuid +
+                ", dtCreate=" + dtCreate +
+                ", dtUpdate=" + dtUpdate +
+                '}';
     }
 }
 

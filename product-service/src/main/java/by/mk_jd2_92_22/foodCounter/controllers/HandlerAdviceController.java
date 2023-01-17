@@ -5,6 +5,7 @@ import by.mk_jd2_92_22.foodCounter.core.exception.entity.ErrorForMultipleErrorRe
 import by.mk_jd2_92_22.foodCounter.core.exception.entity.MultipleErrorResponse;
 import by.mk_jd2_92_22.foodCounter.core.exception.entity.SingleErrorResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +35,14 @@ public class HandlerAdviceController {
         @ExceptionHandler/*({ProductNotFoundException.class})*/
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         public SingleErrorResponse singleErrorServer(IllegalArgumentException e) {
+                return new SingleErrorResponse(
+                        "error",
+                        e.getMessage());
+        }
+
+        @ExceptionHandler/*({ProductNotFoundException.class})*/
+        @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+        public SingleErrorResponse singleErrorServer(OptimisticLockingFailureException e) {
                 return new SingleErrorResponse(
                         "error",
                         e.getMessage());

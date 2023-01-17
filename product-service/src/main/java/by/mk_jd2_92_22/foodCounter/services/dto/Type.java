@@ -5,5 +5,6 @@ public enum Type {
     RECIPE,
     USER,
     JOURNAL_FOOD,
-    REPORT
+    REPORT,
+    PROFILE
 }

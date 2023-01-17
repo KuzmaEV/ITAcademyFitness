@@ -1,26 +1,27 @@
-package by.mk_jd2_92_22.foodCounter.security.customDatail;
+package by.mk_jd2_92_22.foodCounter.model;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+
 public class UserMe {
 
+
     private UUID uuid;
+
+
     private LocalDateTime dtCreate;
+
     private LocalDateTime dtUpdate;
     private String mail;
     private String nick;
+
+
     private Role role;
+
     private Status status;
 
     public UserMe() {
-    }
-
-
-    public UserMe(UUID uuid, Role role, Status status) {
-        this.uuid = uuid;
-        this.role = role;
-        this.status = status;
     }
 
     public UserMe(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate, String mail, String nick, Role role, Status status) {
@@ -87,6 +88,19 @@ public class UserMe {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "UserMe{" +
+                "uuid=" + uuid +
+                ", dtCreate=" + dtCreate +
+                ", dtUpdate=" + dtUpdate +
+                ", mail='" + mail + '\'' +
+                ", nick='" + nick + '\'' +
+                ", role=" + role +
+                ", status=" + status +
+                '}';
     }
 }
 

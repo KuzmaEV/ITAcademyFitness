@@ -1,5 +1,7 @@
 package by.mk_jd2_92_22.foodCounter.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,24 +14,24 @@ public class Profile {
     @Id
     private UUID uuid;
 
-//    @JsonProperty("dt_create")
+    @JsonProperty("dt_create")
     @Column(name = "dt_create")
     private LocalDateTime dtCreate;
 
     @Version
-//    @JsonProperty("dt_update")
+    @JsonProperty("dt_update")
     @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
 
     private int height;
     private double weight;
 
-//    @JsonProperty("dt_birthday")
+    @JsonProperty("dt_birthday")
     @Column(name = "dt_birthday")
     private LocalDate dtBirthday;
     private double target;
 
-//    @JsonProperty("activity_type")
+    @JsonProperty("activity_type")
     @Column(name = "activity_type")
     @Enumerated(value = EnumType.STRING)
     private ActivityType activityType;
@@ -38,7 +40,8 @@ public class Profile {
     @Enumerated(value = EnumType.STRING)
     private ProfileSex sex;
 
-    @Column(name = "profile_user")
+//    @ManyToOne
+    @Column(name = "user_id")
     private UUID user;
 
     public Profile() {

@@ -1,6 +1,7 @@
 package by.mk_jd2_92_22.foodCounter.security.config;
 
 import by.mk_jd2_92_22.foodCounter.security.JwtFilter;
+import by.mk_jd2_92_22.foodCounter.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -56,6 +57,9 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/product/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/profile/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/journal/food/**").authenticated()
+                .antMatchers(HttpMethod.DELETE).hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated();
 
         http.addFilterBefore(

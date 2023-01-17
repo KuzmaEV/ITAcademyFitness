@@ -28,15 +28,20 @@ public class Recipe {
     @JoinColumn(name = "dish_uuid", referencedColumnName = "uuid")
     private List<Ingredient> ingredients;
 
+    @Column(name = "user_id")
+    private UUID userId;
+
     public Recipe() {
     }
 
-    public Recipe(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate, String name, List<Ingredient> ingredients) {
+    public Recipe(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate,
+                  String title, List<Ingredient> ingredients, UUID userId) {
         this.uuid = uuid;
         this.dtCreate = dtCreate;
         this.dtUpdate = dtUpdate;
-        this.title = name;
+        this.title = title;
         this.ingredients = ingredients;
+        this.userId = userId;
     }
 
     public UUID getUuid() {
@@ -69,5 +74,25 @@ public class Recipe {
 
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "uuid=" + uuid +
+                ", dtCreate=" + dtCreate +
+                ", dtUpdate=" + dtUpdate +
+                ", title='" + title + '\'' +
+                ", ingredients=" + ingredients +
+                ", userId=" + userId +
+                '}';
     }
 }

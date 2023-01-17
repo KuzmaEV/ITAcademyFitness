@@ -34,20 +34,25 @@ public class Product {
 
     private int weight;
 
+    @Column(name = "user_id")
+    private UUID userId;
+
     public Product() {
     }
 
     public Product(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate,
-                   String name, int kcal, double proteins, double fats, double carbohydrates, int weight) {
+                   String title, int calories, double proteins, double fats,
+                   double carbohydrates, int weight, UUID userId) {
         this.uuid = uuid;
         this.dtCreate = dtCreate;
         this.dtUpdate = dtUpdate;
-        this.title = name;
-        this.calories = kcal;
+        this.title = title;
+        this.calories = calories;
         this.proteins = proteins;
         this.fats = fats;
         this.carbohydrates = carbohydrates;
         this.weight = weight;
+        this.userId = userId;
     }
 
     public UUID getUuid() {
@@ -118,18 +123,31 @@ public class Product {
         this.weight = weight;
     }
 
+    public void setDtCreate(LocalDateTime dtCreate) {
+        this.dtCreate = dtCreate;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "uuid=" + uuid +
                 ", dtCreate=" + dtCreate +
                 ", dtUpdate=" + dtUpdate +
-                ", name='" + title + '\'' +
-                ", kcal=" + calories +
+                ", title='" + title + '\'' +
+                ", calories=" + calories +
                 ", proteins=" + proteins +
                 ", fats=" + fats +
                 ", carbohydrates=" + carbohydrates +
                 ", weight=" + weight +
+                ", userId=" + userId +
                 '}';
     }
 }

@@ -21,6 +21,8 @@ public class ProductBuilder {
 
     private int weight;
 
+    private UUID userId;
+
     private ProductBuilder() {
     }
 
@@ -105,11 +107,21 @@ public class ProductBuilder {
         return this;
     }
 
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public ProductBuilder setUserId(UUID userId) {
+        this.userId = userId;
+        return this;
+    }
+
     public static ProductBuilder create(){
         return new ProductBuilder();
     }
+
     public Product build(){
-        return new Product(uuid, dtCreate, dtUpdate, name, kcal, proteins, fats, carbohydrates, weight);
+        return new Product(uuid, dtCreate, dtUpdate, name, kcal, proteins, fats, carbohydrates, weight, userId);
     }
 
 

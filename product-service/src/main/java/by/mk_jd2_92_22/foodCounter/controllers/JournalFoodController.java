@@ -1,9 +1,10 @@
 package by.mk_jd2_92_22.foodCounter.controllers;
 
 import by.mk_jd2_92_22.foodCounter.model.JournalFood;
-import by.mk_jd2_92_22.foodCounter.services.JournalFoodService;
+import by.mk_jd2_92_22.foodCounter.services.api.IJournalFoodService;
 import by.mk_jd2_92_22.foodCounter.services.dto.JournalFoodDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,17 @@ import java.util.UUID;
 @RequestMapping("/journal/food")
 public class JournalFoodController {
 
-    private final JournalFoodService service;
+    private final IJournalFoodService service;
 
-    public JournalFoodController(JournalFoodService service) {
+    public JournalFoodController(IJournalFoodService service) {
         this.service = service;
     }
 
+
     @PostMapping
-    ResponseEntity<JournalFood> create(@Valid @RequestBody JournalFoodDTO dto){
-        return ResponseEntity.ok(service.create(dto));
+    ResponseEntity<JournalFood> create(@Valid @RequestBody JournalFoodDTO dto,
+                                       @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
+        return ResponseEntity.ok(service.create(dto, token));
     }
 
     @GetMapping
@@ -43,17 +46,19 @@ public class JournalFoodController {
     @PutMapping("/{uuid}/dt_update/{dt_update}")
     ResponseEntity<JournalFood> update(@PathVariable UUID uuid,
                                        @PathVariable ("dt_update") LocalDateTime dtUpdate,
-                                       @Valid @RequestBody JournalFoodDTO dto){
+                                       @Valid @RequestBody JournalFoodDTO dto,
+                                       @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
 
-        JournalFood product = service.update(uuid, dtUpdate, dto);
+        JournalFood product = service.update(uuid, dtUpdate, dto, token);
         return ResponseEntity.ok(product);
     }
 
     @DeleteMapping("/{uuid}/dt_update/{dt_update}")
     ResponseEntity<?> delete(@PathVariable UUID uuid,
-                             @PathVariable ("dt_update") LocalDateTime dtUpdate){
+                             @PathVariable ("dt_update") LocalDateTime dtUpdate,
+                             @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
 
-        service.delete(uuid, dtUpdate);
+        service.delete(uuid, dtUpdate, token);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

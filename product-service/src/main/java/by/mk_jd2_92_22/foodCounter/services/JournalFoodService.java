@@ -13,6 +13,7 @@ import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
 import by.mk_jd2_92_22.foodCounter.services.mappers.MapperPageDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,7 @@ public class JournalFoodService implements IJournalFoodService {
     }
 
     @Override @Transactional
-    public JournalFood create(JournalFoodDTO item) {
+    public JournalFood create(JournalFoodDTO item, HttpHeaders token) {
 
         UUID uuid = UUID.randomUUID();
         LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
@@ -79,7 +80,7 @@ public class JournalFoodService implements IJournalFoodService {
     }
 
     @Override @Transactional
-    public JournalFood update(UUID uuid, LocalDateTime dtUpdate, JournalFoodDTO item) {
+    public JournalFood update(UUID uuid, LocalDateTime dtUpdate, JournalFoodDTO item, HttpHeaders token) {
 
         JournalFood diary = dao.findById(uuid).orElseThrow(()->
                 new NotFoundException("Не удалось найти запись дневника питания "));
@@ -109,7 +110,7 @@ public class JournalFoodService implements IJournalFoodService {
     }
 
     @Override @Transactional
-    public void delete(UUID uuid, LocalDateTime dtUpdate) {
+    public void delete(UUID uuid, LocalDateTime dtUpdate, HttpHeaders token) {
 
         JournalFood diary = dao.findById(uuid).orElseThrow(()->
                 new NotFoundException("Не удалось найти запись дневника питания "));
