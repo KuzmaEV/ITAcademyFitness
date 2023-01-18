@@ -39,7 +39,7 @@ public class ProductController {
     @GetMapping("/my")
     public ResponseEntity<PageDTO<Product>> getMy(@RequestParam int page,
                                                 @RequestParam int size){
-        return ResponseEntity.ok(service.get(page, size));
+        return ResponseEntity.ok(service.getMy(page, size));
     }
 
     @GetMapping

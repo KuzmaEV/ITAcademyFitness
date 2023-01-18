@@ -38,7 +38,7 @@ public class RecipeController {
     @GetMapping("/my")
     ResponseEntity<PageDTO<Recipe>> getMy(@RequestParam int page,
                                         @RequestParam int size){
-        return ResponseEntity.ok(service.get(page, size));
+        return ResponseEntity.ok(service.getMy(page, size));
     }
 
     @GetMapping
