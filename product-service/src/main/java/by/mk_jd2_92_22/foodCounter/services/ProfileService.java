@@ -1,6 +1,6 @@
 package by.mk_jd2_92_22.foodCounter.services;
 
-import by.mk_jd2_92_22.foodCounter.core.builder.ProfileBuilder;
+import by.mk_jd2_92_22.foodCounter.services.builder.ProfileBuilder;
 import by.mk_jd2_92_22.foodCounter.repositories.ProfileRepository;
 import by.mk_jd2_92_22.foodCounter.model.Profile;
 import by.mk_jd2_92_22.foodCounter.model.UserProfile;

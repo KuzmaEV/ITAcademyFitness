@@ -1,4 +1,4 @@
-package by.mk_jd2_92_22.foodCounter.core.builder;
+package by.mk_jd2_92_22.foodCounter.services.builder;
 
 import by.mk_jd2_92_22.foodCounter.model.ActivityType;
 import by.mk_jd2_92_22.foodCounter.model.Profile;

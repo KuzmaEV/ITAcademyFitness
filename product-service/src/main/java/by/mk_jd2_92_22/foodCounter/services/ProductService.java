@@ -1,7 +1,7 @@
 package by.mk_jd2_92_22.foodCounter.services;
 
-import by.mk_jd2_92_22.foodCounter.core.builder.ProductBuilder;
-import by.mk_jd2_92_22.foodCounter.core.exception.NotFoundException;
+import by.mk_jd2_92_22.foodCounter.services.builder.ProductBuilder;
+import by.mk_jd2_92_22.foodCounter.services.exception.NotFoundException;
 import by.mk_jd2_92_22.foodCounter.repositories.IProductDao;
 import by.mk_jd2_92_22.foodCounter.model.Product;
 import by.mk_jd2_92_22.foodCounter.security.customDatail.UserHolder;

@@ -1,6 +1,6 @@
 package by.mk_jd2_92_22.foodCounter.services;
 
-import by.mk_jd2_92_22.foodCounter.core.exception.NotFoundException;
+import by.mk_jd2_92_22.foodCounter.services.exception.NotFoundException;
 import by.mk_jd2_92_22.foodCounter.repositories.IJournalFoodDao;
 import by.mk_jd2_92_22.foodCounter.model.Recipe;
 import by.mk_jd2_92_22.foodCounter.model.JournalFood;

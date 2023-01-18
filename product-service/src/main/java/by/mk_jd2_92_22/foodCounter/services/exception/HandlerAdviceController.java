@@ -1,8 +1,8 @@
-package by.mk_jd2_92_22.foodCounter.core.exception;
+package by.mk_jd2_92_22.foodCounter.services.exception;
 
-import by.mk_jd2_92_22.foodCounter.core.exception.entity.ErrorForMultipleErrorResponse;
-import by.mk_jd2_92_22.foodCounter.core.exception.entity.MultipleErrorResponse;
-import by.mk_jd2_92_22.foodCounter.core.exception.entity.SingleErrorResponse;
+import by.mk_jd2_92_22.foodCounter.services.exception.entity.ErrorForMultipleErrorResponse;
+import by.mk_jd2_92_22.foodCounter.services.exception.entity.MultipleErrorResponse;
+import by.mk_jd2_92_22.foodCounter.services.exception.entity.SingleErrorResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
