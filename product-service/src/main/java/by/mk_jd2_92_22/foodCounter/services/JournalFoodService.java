@@ -64,8 +64,8 @@ public class JournalFoodService implements IJournalFoodService {
 
         if (item.getProduct() != null) {
             product = this.productService.get(item.getProduct().getUuid());
-        } else if (item.getDish() != null) {
-            dish = this.dishService.get(item.getDish().getUuid());
+        } else if (item.getRecipe() != null) {
+            dish = this.dishService.get(item.getRecipe().getUuid());
         } else {throw new IllegalStateException("Запрос некорректен. Сервер не может обработать запрос");}
 
         JournalFood journalFood = new JournalFood(uuid,
@@ -101,7 +101,7 @@ public class JournalFoodService implements IJournalFoodService {
 
         this.profileService.get(profile);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("dt_supply").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dtSupply").descending());
 
         return mapperPageDTO.mapper(dao.findAllByProfile(pageable, profile));
     }
@@ -123,8 +123,8 @@ public class JournalFoodService implements IJournalFoodService {
             if (item.getProduct() != null) {
                 product = this.productService.get(item.getProduct().getUuid());
             }
-            if (item.getDish() != null) {
-                dish = this.dishService.get(item.getDish().getUuid());
+            if (item.getRecipe() != null) {
+                dish = this.dishService.get(item.getRecipe().getUuid());
             }
 
             diary.setDtUpdate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));

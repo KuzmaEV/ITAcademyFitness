@@ -25,6 +25,7 @@ public class Recipe {
 
     private String title;
 
+    @JsonProperty("composition")
     @OneToMany
     @JoinColumn(name = "dish_uuid", referencedColumnName = "uuid")
     private List<Ingredient> ingredients;

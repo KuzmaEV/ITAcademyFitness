@@ -26,7 +26,7 @@ public class JournalFood {
     private LocalDateTime dtUpdate;
 
     @JsonProperty("dt_supply")
-    @Column(name = "dt_supply")
+    @Column(name = "supply")
     private LocalDateTime dtSupply;
 
     @ManyToOne

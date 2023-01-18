@@ -57,6 +57,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/product/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/product/my**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/profile/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/journal/food/**").authenticated()
                 .antMatchers(HttpMethod.DELETE).hasRole(Role.ADMIN.name())

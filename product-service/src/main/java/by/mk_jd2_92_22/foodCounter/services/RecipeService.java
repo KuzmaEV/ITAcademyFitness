@@ -53,7 +53,7 @@ public class RecipeService implements IRecipeService {
 
         final UUID uuidDish = UUID.randomUUID();
         final LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
-        final List<Ingredient> ingredients = ingredientService.create(item.getIngredients());
+        final List<Ingredient> ingredients = ingredientService.create(item.getComposition());
 
         final Recipe dish = new Recipe(uuidDish,
                 time,
@@ -109,7 +109,7 @@ public class RecipeService implements IRecipeService {
 
             this.ingredientService.delete(deleteIngredients);
 
-            List<Ingredient> ingredients = this.ingredientService.create(item.getIngredients());
+            List<Ingredient> ingredients = this.ingredientService.create(item.getComposition());
 
             dish.setDtUpdate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
             dish.setTitle(item.getTitle());

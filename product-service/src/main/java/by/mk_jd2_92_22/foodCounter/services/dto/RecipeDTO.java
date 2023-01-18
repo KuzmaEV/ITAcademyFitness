@@ -9,14 +9,14 @@ public class RecipeDTO {
     @NotBlank(message = "Title is mandatory")
     private String title;
     @NotEmpty(message = "Ingredients is mandatory")
-    private List<IngredientDTO> ingredients;
+    private List<IngredientDTO> composition;
 
     public RecipeDTO() {
     }
 
     public RecipeDTO(String name, List<IngredientDTO> ingredients) {
         this.title = name;
-        this.ingredients = ingredients;
+        this.composition = ingredients;
     }
 
     public String getTitle() {
@@ -27,12 +27,12 @@ public class RecipeDTO {
         this.title = title;
     }
 
-    public List<IngredientDTO> getIngredients() {
-        return ingredients;
+    public List<IngredientDTO> getComposition() {
+        return composition;
     }
 
-    public void setIngredients(List<IngredientDTO> ingredients) {
-        this.ingredients = ingredients;
+    public void setComposition(List<IngredientDTO> composition) {
+        this.composition = composition;
     }
 
 }

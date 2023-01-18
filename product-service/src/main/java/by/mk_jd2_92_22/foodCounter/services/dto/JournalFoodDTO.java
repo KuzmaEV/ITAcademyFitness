@@ -14,7 +14,7 @@ public class JournalFoodDTO {
     private LocalDateTime dtSupply;
 
     private Product product;
-    private Dish dish;
+    private Dish recipe;
     @Positive(message = "Weight cannot be less than 1")
     private int weight;
 
@@ -24,7 +24,7 @@ public class JournalFoodDTO {
     public JournalFoodDTO(LocalDateTime dtSupply, Product product, Dish dish, int weight) {
         this.dtSupply = dtSupply;
         this.product = product;
-        this.dish = dish;
+        this.recipe = dish;
         this.weight = weight;
     }
 
@@ -36,12 +36,12 @@ public class JournalFoodDTO {
         this.product = product;
     }
 
-    public Dish getDish() {
-        return dish;
+    public Dish getRecipe() {
+        return recipe;
     }
 
-    public void setDish(Dish dish) {
-        this.dish = dish;
+    public void setRecipe(Dish recipe) {
+        this.recipe = recipe;
     }
 
     public int getWeight() {
