@@ -36,6 +36,12 @@ public class ProductController {
         return ResponseEntity.ok(service.get(page, size));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<PageDTO<Product>> getMy(@RequestParam int page,
+                                                @RequestParam int size){
+        return ResponseEntity.ok(service.get(page, size));
+    }
+
     @GetMapping
     @RequestMapping("/{uuid}")
     public ResponseEntity<Product> get(@PathVariable UUID uuid){

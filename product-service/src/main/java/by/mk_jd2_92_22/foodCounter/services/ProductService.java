@@ -77,6 +77,16 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public PageDTO<Product> getMy(int page, int size) {
+
+        final UUID user = UUID.fromString(this.holder.getUser().getUsername());
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return mapperPageDTO.mapper(dao.findAllByUserId(pageable, user));
+    }
+
+    @Override
     @Transactional
     public Product update(UUID uuid, LocalDateTime dtUpdate, ProductDTO item, HttpHeaders token) {
 

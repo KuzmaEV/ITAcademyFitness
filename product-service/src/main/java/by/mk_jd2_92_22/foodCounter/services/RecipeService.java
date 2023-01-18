@@ -84,6 +84,15 @@ public class RecipeService implements IRecipeService {
     }
 
     @Override
+    public PageDTO<Recipe> getMy(int page, int size) {
+        final UUID user = UUID.fromString(this.holder.getUser().getUsername());
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return mapperPageDTO.mapper(dao.findAllByUserId(pageable, user));
+    }
+
+    @Override
     @Transactional
     public Recipe update(UUID uuid, LocalDateTime dtUpdate, RecipeDTO item, HttpHeaders token) {
 

@@ -35,6 +35,12 @@ public class RecipeController {
         return ResponseEntity.ok(service.get(page, size));
     }
 
+    @GetMapping("/my")
+    ResponseEntity<PageDTO<Recipe>> getMy(@RequestParam int page,
+                                        @RequestParam int size){
+        return ResponseEntity.ok(service.get(page, size));
+    }
+
     @GetMapping
     @RequestMapping("/{uuid}")
     ResponseEntity<Recipe> get(@PathVariable UUID uuid){
