@@ -1,6 +1,7 @@
 package by.mk_jd2_92_22.foodCounter.controllers;
 
 import by.mk_jd2_92_22.foodCounter.model.JournalFood;
+import by.mk_jd2_92_22.foodCounter.model.JournalFoodList;
 import by.mk_jd2_92_22.foodCounter.services.api.IJournalFoodService;
 import by.mk_jd2_92_22.foodCounter.services.dto.JournalFoodDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -66,6 +68,16 @@ public class JournalFoodController {
         service.delete(uuid, dtUpdate, profile, token);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{uuid_profile}/report")
+    ResponseEntity<JournalFoodList> get(@PathVariable("uuid_profile") UUID profileId,
+                                          @RequestParam LocalDate from,
+                                          @RequestParam LocalDate to){
+
+        final JournalFoodList journalFoods = this.service.get(from, to, profileId);
+        return ResponseEntity.ok(journalFoods);
+
     }
 
 }

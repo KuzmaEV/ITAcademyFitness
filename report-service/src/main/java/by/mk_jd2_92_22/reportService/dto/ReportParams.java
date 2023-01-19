@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @Embeddable
 public class ReportParams {
     @JsonProperty("from")
-    @Past(message = "must be past tense")
+    @PastOrPresent(message = "must be past tense")
     @NotNull(message = "param \"From\" is mandatory")
     private LocalDate dtFrom;
 
     @JsonProperty("to")
-    @Past(message = "must be past tense")
+    @PastOrPresent(message = "must be past tense")
     @NotNull(message = "pram \"To\" is mandatory")
     private LocalDate dtTo;
 

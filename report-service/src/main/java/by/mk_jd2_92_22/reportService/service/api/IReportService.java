@@ -6,7 +6,10 @@ import by.mk_jd2_92_22.reportService.model.Report;
 import by.mk_jd2_92_22.reportService.model.ReportType;
 import org.springframework.http.HttpHeaders;
 
+import java.util.UUID;
+
 public interface IReportService {
-    void create(ReportParams params, ReportType type, HttpHeaders token);
-    PageDTO<Report> get(int page, int size);
+    void create(ReportParams params, ReportType type, UUID profile, HttpHeaders token);
+    PageDTO<Report> get(int page, int size, UUID profileId, HttpHeaders token);
+    void validation(UUID reportUuid, HttpHeaders token);
 }

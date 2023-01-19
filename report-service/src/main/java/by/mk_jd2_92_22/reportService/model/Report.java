@@ -13,10 +13,10 @@ import java.util.UUID;
 public class Report {
 
     @Id
-    private final UUID uuid;
+    private UUID uuid;
     @Column(name = "dt_create")
     @JsonProperty("dt_create")
-    private final LocalDateTime dtCreate;
+    private LocalDateTime dtCreate;
     @Version
     @Column(name = "dt_update")
     @JsonProperty("dt_update")
@@ -36,9 +36,11 @@ public class Report {
     private ReportParams params;
 
     @JsonIgnore
-    @Column(name = "user_id")
-    private UUID userId;
+    @Column(name = "profile_id")
+    private UUID profileId;
 
+    public Report() {
+    }
 
     public Report(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate, Status status,
                   ReportType type, String description, ReportParams params, UUID userId) {
@@ -49,7 +51,7 @@ public class Report {
         this.type = type;
         this.description = description;
         this.params = params;
-        this.userId = userId;
+        this.profileId = userId;
     }
 
     public UUID getUuid() {
@@ -102,12 +104,12 @@ public class Report {
         this.params = params;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getProfileId() {
+        return profileId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setProfileId(UUID profileId) {
+        this.profileId = profileId;
     }
 
     @Override
@@ -120,7 +122,7 @@ public class Report {
                 ", type=" + type +
                 ", description='" + description + '\'' +
                 ", params=" + params +
-                ", userId=" + userId +
+                ", userId=" + profileId +
                 '}';
     }
 }

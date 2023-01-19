@@ -20,9 +20,15 @@ import java.util.List;
 @RestControllerAdvice
 public class HandlerAdviceController {
 
-        @ExceptionHandler({NotFoundException.class, IllegalStateException.class})
+        @ExceptionHandler//({NotFoundException.class, IllegalStateException.class})
+        @ResponseStatus(HttpStatus.NO_CONTENT)
+        public String noContent(NoContentException e) {
+                return "no content " + e.getMessage();
+        }
+
+        @ExceptionHandler//({NotFoundException.class, IllegalStateException.class})
         @ResponseStatus(HttpStatus.BAD_REQUEST)
-        public SingleErrorResponse singleErrorBadRequest(RuntimeException e) {
+        public SingleErrorResponse singleErrorBadRequest(IllegalStateException e) {
                 return new SingleErrorResponse(
                         "error",
                         e.getMessage());
@@ -43,7 +49,7 @@ public class HandlerAdviceController {
                         e.getMessage());
         }
 
-        @ExceptionHandler/*({ProductNotFoundException.class})*/
+        @ExceptionHandler
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         public SingleErrorResponse singleErrorServer(IllegalArgumentException e) {
                 return new SingleErrorResponse(
@@ -51,7 +57,7 @@ public class HandlerAdviceController {
                         e.getMessage());
         }
 
-        @ExceptionHandler/*({ProductNotFoundException.class})*/
+        @ExceptionHandler
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         public SingleErrorResponse singleErrorServer(OptimisticLockingFailureException e) {
                 return new SingleErrorResponse(

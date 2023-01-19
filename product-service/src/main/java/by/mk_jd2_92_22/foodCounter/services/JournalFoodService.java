@@ -1,5 +1,6 @@
 package by.mk_jd2_92_22.foodCounter.services;
 
+import by.mk_jd2_92_22.foodCounter.model.JournalFoodList;
 import by.mk_jd2_92_22.foodCounter.services.exception.NotFoundException;
 import by.mk_jd2_92_22.foodCounter.repositories.IJournalFoodDao;
 import by.mk_jd2_92_22.foodCounter.model.Recipe;
@@ -22,8 +23,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -104,6 +107,16 @@ public class JournalFoodService implements IJournalFoodService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("dtSupply").descending());
 
         return mapperPageDTO.mapper(dao.findAllByProfile(pageable, profile));
+    }
+
+    @Override
+    public JournalFoodList get(LocalDate from, LocalDate to, UUID profileId) {
+        if (from.isAfter(to)){
+            throw new IllegalStateException("некорректные данные при указании интервала даты");
+        }
+
+        final List<JournalFood> journalFoods = this.dao.findAllByProfileAndDtSupplyBetween(profileId, from, to);
+        return new JournalFoodList(journalFoods);
     }
 
     @Override @Transactional

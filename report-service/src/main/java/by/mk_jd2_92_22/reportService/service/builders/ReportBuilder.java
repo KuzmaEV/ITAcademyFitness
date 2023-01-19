@@ -17,7 +17,7 @@ public class ReportBuilder {
     private ReportType type;
     private String description;
     private ReportParams params;
-    private UUID userId;
+    private UUID profileId;
 
     public ReportBuilder() {
     }
@@ -57,8 +57,8 @@ public class ReportBuilder {
         return this;
     }
 
-    public ReportBuilder setUserId(UUID userId) {
-        this.userId = userId;
+    public ReportBuilder setProfileId(UUID profileId) {
+        this.profileId = profileId;
         return this;
     }
 
@@ -71,6 +71,6 @@ public class ReportBuilder {
         type,
         description,
         params,
-        userId);
+        profileId);
     }
 }

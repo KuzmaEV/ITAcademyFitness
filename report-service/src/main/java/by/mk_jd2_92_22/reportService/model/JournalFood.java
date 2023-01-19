@@ -1,4 +1,4 @@
-package by.mk_jd2_92_22.foodCounter.model;
+package by.mk_jd2_92_22.reportService.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,29 +9,22 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Entity
-@Table(name = "journal_food")
 public class JournalFood {
 
     @Id
     private UUID uuid;
 
     @JsonProperty("dt_create")
-    @Column(name = "dt_create")
     private LocalDateTime dtCreate;
 
-    @Version
     @JsonProperty("dt_update")
-    @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
 
     @JsonProperty("dt_supply")
-    @Column(name = "supply")
     private LocalDateTime dtSupply;
 
-    @ManyToOne
     private  Product product;
-    @ManyToOne
+
     private Recipe dish;
 
     private int weight;

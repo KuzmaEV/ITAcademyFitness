@@ -11,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 
-@RestController("/report")
+@RestController
+@RequestMapping("/report")
 public class ReportController {
 
     private final IReportService service;
@@ -23,29 +25,34 @@ public class ReportController {
     }
 
 
-    @PostMapping("/{type}")
+    @PostMapping("/{type}/profile/{profile_uuid}")
     public ResponseEntity<String> create(@Valid @RequestBody ReportParams params,
-                                  @PathVariable ReportType type,
-                                  @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
+                                         @PathVariable("type") ReportType type,
+                                         @PathVariable("profile_uuid") UUID profile,
+                                         @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
 
-        this.service.create(params, type, token);
+        this.service.create(params, type, profile, token);
         return new ResponseEntity<>("Отчет запущен", HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/profile/{profile_uuid}")
     public ResponseEntity<PageDTO<Report>> get(@RequestParam int page,
-                                               @RequestParam int size){
-        return ResponseEntity.ok(this.service.get(page, size));}
+                                               @RequestParam int size,
+                                               @PathVariable("profile_uuid") UUID profile,
+                                               @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
+        return ResponseEntity.ok(this.service.get(page, size, profile, token));}
 
 //    @GetMapping("/{uuid}/export")
 //    public ResponseEntity<Report> get(@PathVariable UUID uuid){
 //
 //        return ResponseEntity.ok();
 //    }
-//
-//    @RequestMapping(method = RequestMethod.HEAD, value = "{uuid}/export")
-//    public ResponseEntity<?> head(@PathVariable UUID uuid){
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+
+    @RequestMapping(method = RequestMethod.HEAD, value = "{uuid}/export")
+    public ResponseEntity<?> head(@PathVariable UUID uuid,
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
+        this.service.validation(uuid, token);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
 

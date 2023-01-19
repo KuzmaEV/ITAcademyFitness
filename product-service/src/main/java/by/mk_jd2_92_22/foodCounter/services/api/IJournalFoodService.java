@@ -1,11 +1,14 @@
 package by.mk_jd2_92_22.foodCounter.services.api;
 
 import by.mk_jd2_92_22.foodCounter.model.JournalFood;
+import by.mk_jd2_92_22.foodCounter.model.JournalFoodList;
 import by.mk_jd2_92_22.foodCounter.services.dto.JournalFoodDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
 import org.springframework.http.HttpHeaders;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface IJournalFoodService{
@@ -19,4 +22,6 @@ public interface IJournalFoodService{
     JournalFood update(UUID uuid, LocalDateTime dtUpdate, JournalFoodDTO item, UUID profile, HttpHeaders token);
 
     void delete(UUID uuid, LocalDateTime dtUpdate, UUID profile, HttpHeaders token);
+
+    JournalFoodList get(LocalDate from, LocalDate to, UUID profileId);
 }

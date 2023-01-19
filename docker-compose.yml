@@ -30,28 +30,28 @@ services:
 
   product-service:
     build: product-service
-    image: fitness_product-service:1.0.8
+    image: fitness_product-service:1.0.27
     networks:
       - fitness_ntwrk
   user-service:
     build: user-service
-    image: fitness_user-service:1.0.12
+    image: fitness_user-service:1.0.22
     networks:
       - fitness_ntwrk
   audit-service:
     build: audit-service
-    image: fitness_audit-service:1.0.7
+    image: fitness_audit-service:1.0.19
     networks:
       - fitness_ntwrk
-#  report-service:
-#    build: report-service
-#    image: fitness_report-service:1.0.0
-#    networks:
-#      - fitness_ntwrk
+  report-service:
+    build: report-service
+    image: fitness_report-service:1.0.6
+    networks:
+      - fitness_ntwrk
 
   proxy:
     build: proxy
-    image: fitness_proxy:1.0.7
+    image: fitness_proxy:1.0.9
     ports:
       - "80:80"
     networks:
