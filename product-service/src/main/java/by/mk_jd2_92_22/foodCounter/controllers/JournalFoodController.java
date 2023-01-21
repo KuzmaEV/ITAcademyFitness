@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -70,12 +69,13 @@ public class JournalFoodController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{uuid_profile}/report")
+    @GetMapping("/{uuid_profile}/journal/food/dt_from/{dt_from}/dt_to/{dt_to}")
     ResponseEntity<JournalFoodList> get(@PathVariable("uuid_profile") UUID profileId,
-                                          @RequestParam LocalDate from,
-                                          @RequestParam LocalDate to){
+                                              @PathVariable("dt_from") LocalDateTime from,
+                                              @PathVariable("dt_to") LocalDateTime to){
 
-        final JournalFoodList journalFoods = this.service.get(from, to, profileId);
+        final JournalFoodList journalFoods = this.service.get(from,
+                to.plusDays(1), profileId);
         return ResponseEntity.ok(journalFoods);
 
     }

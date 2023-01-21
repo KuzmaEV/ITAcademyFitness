@@ -1,6 +1,7 @@
 package by.mk_jd2_92_22.reportService.service;
 
 import by.mk_jd2_92_22.reportService.dto.ProfileDTO;
+import by.mk_jd2_92_22.reportService.service.api.IResponseReportService;
 import by.mk_jd2_92_22.reportService.service.builders.ReportBuilder;
 import by.mk_jd2_92_22.reportService.dto.PageDTO;
 import by.mk_jd2_92_22.reportService.dto.ReportParams;
@@ -36,14 +37,17 @@ public class ReportService implements IReportService {
     private final CreatingAudit creatingAudit;
     private final MapperPageDTO<Report> mapperPageDTO;
     private final GetFromAnotherService getFromAnotherService;
+    private final IResponseReportService responseReportService;
 
     public ReportService(IReportRepository dao, UserHolder holder, CreatingAudit creatingAudit,
-                         MapperPageDTO<Report> mapperPageDTO, GetFromAnotherService getFromAnotherService) {
+                         MapperPageDTO<Report> mapperPageDTO, GetFromAnotherService getFromAnotherService,
+                         IResponseReportService responseReportService) {
         this.dao = dao;
         this.holder = holder;
         this.creatingAudit = creatingAudit;
         this.mapperPageDTO = mapperPageDTO;
         this.getFromAnotherService = getFromAnotherService;
+        this.responseReportService = responseReportService;
     }
 
     @Override
@@ -103,14 +107,31 @@ public class ReportService implements IReportService {
     @Transactional(readOnly = true)
     public void validation(UUID reportUuid, HttpHeaders token){
 
-        final UUID userUuid = UUID.fromString(this.holder.getUser().getUsername());
+//        final UUID userUuid = UUID.fromString(this.holder.getUser().getUsername());
 
 
         final Report report = this.dao.findByUuidAndStatus(reportUuid, Status.DONE).orElseThrow(() ->
                 new NoContentException("Сервер, по предоставленному uuid, не смог найти информацию"));
 
-        final UUID profileId = report.getProfileId();
-        //TODO проверить есть ли такой профиль
+//        final UUID profileId = report.getProfileId();
 
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public  byte[] get(UUID reportUuid, HttpHeaders token){
+
+//        final UUID userUuid = UUID.fromString(this.holder.getUser().getUsername());
+
+
+        final Report report = this.dao.findByUuidAndStatus(reportUuid, Status.DONE).orElseThrow(() ->
+                new NoContentException("Сервер, по предоставленному uuid, не смог найти информацию"));
+
+//        final UUID profileId = report.getProfileId();
+
+
+        return this.responseReportService.generateReport(report, token);
+    }
+
+
 }

@@ -42,11 +42,6 @@ public class ReportController {
                                                @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
         return ResponseEntity.ok(this.service.get(page, size, profile, token));}
 
-//    @GetMapping("/{uuid}/export")
-//    public ResponseEntity<Report> get(@PathVariable UUID uuid){
-//
-//        return ResponseEntity.ok();
-//    }
 
     @RequestMapping(method = RequestMethod.HEAD, value = "{uuid}/export")
     public ResponseEntity<?> head(@PathVariable UUID uuid,
@@ -54,5 +49,13 @@ public class ReportController {
         this.service.validation(uuid, token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/{uuid}/export")
+    public ResponseEntity< byte[]> get(@PathVariable UUID uuid,
+                                      @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
+
+        return ResponseEntity.ok(this.service.get(uuid, token));
+    }
+
 }
 

@@ -3,6 +3,7 @@ package by.mk_jd2_92_22.reportService.service.utils;
 import by.mk_jd2_92_22.reportService.dto.JournalFoodList;
 import by.mk_jd2_92_22.reportService.dto.ProfileDTO;
 import by.mk_jd2_92_22.reportService.model.JournalFood;
+import by.mk_jd2_92_22.reportService.model.Report;
 import by.mk_jd2_92_22.reportService.security.customDatail.UserMe;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,17 +81,43 @@ public class GetFromAnotherService {
 
     public List<JournalFood> getJournalFoods(HttpHeaders token, UUID profileId, LocalDate dtFrom, LocalDate dtTo) {
 
-        final long from = dtFrom.toEpochDay();
-        final long to = dtTo.toEpochDay();
+        final long from = localDateToMillis(dtFrom);
+        final long to = localDateToMillis(dtTo);
 
-        String url = "http://product-service:8080/profile/" + profileId + "/report?from=" + from + "&to=" + to;
+        String url = "http://product-service:8080/profile/" + profileId
+                + "/journal/food/dt_from/" + from + "/dt_to/" + to;
         HttpEntity<String> jwtEntity = new HttpEntity<>(token);
 
         try {
             final ResponseEntity<JournalFoodList> responseEntity = this.restTemplate
                     .exchange(url, HttpMethod.GET, jwtEntity, JournalFoodList.class);
 
-            return responseEntity.getBody().getList();
+            return responseEntity.getBody().getList();//TODO list non null
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(
+                    "Не удалось получить Profile для report-service: " + e.getMessage());
+        }
+    }
+
+    public List<JournalFood> getJournalFoods(HttpHeaders token, Report report) {
+
+        UUID profileId = report.getProfileId();
+        LocalDate dtFrom = report.getParams().getDtFrom();
+        LocalDate dtTo = report.getParams().getDtTo();
+
+        final long from = localDateToMillis(dtFrom);
+        final long to = localDateToMillis(dtTo);
+
+        String url = "http://product-service:8080/profile/" + profileId
+                + "/journal/food/dt_from/" + from + "/dt_to/" + to;
+        HttpEntity<String> jwtEntity = new HttpEntity<>(token);
+
+        try {
+            final ResponseEntity<JournalFoodList> responseEntity = this.restTemplate
+                    .exchange(url, HttpMethod.GET, jwtEntity, JournalFoodList.class);
+
+            return responseEntity.getBody().getList();//TODO list non null
         } catch (RestClientException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(
@@ -105,6 +133,10 @@ public class GetFromAnotherService {
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.set("Authorization", tokenHead);
         return headers;
+    }
+
+    private long localDateToMillis(LocalDate date){
+        return date.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
     }
 
 }

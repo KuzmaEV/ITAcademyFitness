@@ -23,7 +23,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -110,7 +109,7 @@ public class JournalFoodService implements IJournalFoodService {
     }
 
     @Override
-    public JournalFoodList get(LocalDate from, LocalDate to, UUID profileId) {
+    public JournalFoodList get(LocalDateTime from, LocalDateTime to, UUID profileId) {
         if (from.isAfter(to)){
             throw new IllegalStateException("некорректные данные при указании интервала даты");
         }

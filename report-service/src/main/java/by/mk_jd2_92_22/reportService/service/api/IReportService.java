@@ -12,4 +12,5 @@ public interface IReportService {
     void create(ReportParams params, ReportType type, UUID profile, HttpHeaders token);
     PageDTO<Report> get(int page, int size, UUID profileId, HttpHeaders token);
     void validation(UUID reportUuid, HttpHeaders token);
+    byte[] get(UUID reportUuid, HttpHeaders token);
 }
