@@ -7,7 +7,7 @@ public class Audit {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private String id;
+    private long id;
 
     @ManyToOne
     private UserAudit user;
@@ -21,7 +21,7 @@ public class Audit {
     public Audit() {
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 

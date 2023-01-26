@@ -10,11 +10,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.UUID;
 
 @Component
-public class CreatingAudit {
+public class AuditProvider {
 
     private final RestTemplate restTemplate;
 
-    public CreatingAudit(RestTemplate restTemplate) {
+    public AuditProvider(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

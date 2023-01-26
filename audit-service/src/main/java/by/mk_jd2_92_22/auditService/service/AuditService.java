@@ -40,7 +40,7 @@ public class AuditService implements IAuditService {
     }
 
     @Override
-    public Audit get(String id) {
+    public Audit get(long id) {
 
         return dao.findById(id).orElseThrow(() ->
                 new NotFoundException("Аудит с таким id не найден"));

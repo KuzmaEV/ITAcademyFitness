@@ -7,6 +7,6 @@ import org.springframework.http.HttpHeaders;
 
 public interface IAuditService {
     PageDTO<Audit> get(int page, int size);
-    Audit get(String id);
+    Audit get(long id);
     Audit create(AuditRequestDTO dto, HttpHeaders token);
 }
