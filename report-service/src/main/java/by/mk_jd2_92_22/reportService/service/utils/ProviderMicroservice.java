@@ -1,10 +1,11 @@
 package by.mk_jd2_92_22.reportService.service.utils;
 
-import by.mk_jd2_92_22.reportService.dto.JournalFoodList;
+import by.mk_jd2_92_22.reportService.model.JournalFoodDTO;
 import by.mk_jd2_92_22.reportService.dto.ProfileDTO;
 import by.mk_jd2_92_22.reportService.model.JournalFood;
 import by.mk_jd2_92_22.reportService.model.Report;
-import by.mk_jd2_92_22.reportService.security.customDatail.UserMe;
+import by.mk_jd2_92_22.reportService.security.JwtProvider;
+import by.mk_jd2_92_22.reportService.security.customDatail.entity.UserMe;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -16,12 +17,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class GetFromAnotherService {
+public class ProviderMicroservice {
 
     private final RestTemplate restTemplate;
+    private final JwtProvider jwtProvider;
 
-    public GetFromAnotherService(RestTemplate restTemplate) {
+    public ProviderMicroservice(RestTemplate restTemplate, JwtProvider jwtProvider) {
         this.restTemplate = restTemplate;
+        this.jwtProvider = jwtProvider;
     }
 
 
@@ -79,7 +82,7 @@ public class GetFromAnotherService {
         }
     }
 
-    public List<JournalFood> getJournalFoods(HttpHeaders token, UUID profileId, LocalDate dtFrom, LocalDate dtTo) {
+    public JournalFoodDTO getJournalFood(HttpHeaders token, UUID profileId, LocalDate dtFrom, LocalDate dtTo) {
 
         final long from = localDateToMillis(dtFrom);
         final long to = localDateToMillis(dtTo);
@@ -89,10 +92,10 @@ public class GetFromAnotherService {
         HttpEntity<String> jwtEntity = new HttpEntity<>(token);
 
         try {
-            final ResponseEntity<JournalFoodList> responseEntity = this.restTemplate
-                    .exchange(url, HttpMethod.GET, jwtEntity, JournalFoodList.class);
+            final ResponseEntity<JournalFoodDTO> responseEntity = this.restTemplate
+                    .exchange(url, HttpMethod.GET, jwtEntity, JournalFoodDTO.class);
 
-            return responseEntity.getBody().getList();//TODO list non null
+            return responseEntity.getBody();
         } catch (RestClientException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(
@@ -100,7 +103,43 @@ public class GetFromAnotherService {
         }
     }
 
-    public List<JournalFood> getJournalFoods(HttpHeaders token, Report report) {
+    public List<JournalFood> getJournalFoodEntries(Report report) {
+
+        UUID profileId = report.getProfileId();
+        LocalDate dtFrom = report.getParams().getDtFrom();
+        LocalDate dtTo = report.getParams().getDtTo();
+
+        final long from = localDateToMillis(dtFrom);
+        final long to = localDateToMillis(dtTo);
+
+        String url = "http://product-service:8080/profile/" + profileId
+                + "/journal/food/dt_from/" + from + "/dt_to/" + to;
+
+        String tokenStr = this.jwtProvider.createToken(report.getEmail());
+        final HttpHeaders token = this.createHeaderFromToken(tokenStr);
+        HttpEntity<String> jwtEntity = new HttpEntity<>(token);
+
+        JournalFoodDTO journalFoodDTO;
+        try {
+            final ResponseEntity<JournalFoodDTO> responseEntity = this.restTemplate
+                    .exchange(url, HttpMethod.GET, jwtEntity, JournalFoodDTO.class);
+
+            journalFoodDTO = responseEntity.getBody();
+
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(
+                    "Не удалось получить записи журнала для report-service: " + e.getMessage());
+        }
+
+        if (journalFoodDTO == null){
+            throw new IllegalArgumentException("Не удалось получить записи журнала для report-service");
+        }
+        return journalFoodDTO.getList();
+
+    }
+
+    public JournalFoodDTO getJournalFood(HttpHeaders token, Report report) {
 
         UUID profileId = report.getProfileId();
         LocalDate dtFrom = report.getParams().getDtFrom();
@@ -114,10 +153,10 @@ public class GetFromAnotherService {
         HttpEntity<String> jwtEntity = new HttpEntity<>(token);
 
         try {
-            final ResponseEntity<JournalFoodList> responseEntity = this.restTemplate
-                    .exchange(url, HttpMethod.GET, jwtEntity, JournalFoodList.class);
+            final ResponseEntity<JournalFoodDTO> responseEntity = this.restTemplate
+                    .exchange(url, HttpMethod.GET, jwtEntity, JournalFoodDTO.class);
 
-            return responseEntity.getBody().getList();//TODO list non null
+            return responseEntity.getBody();
         } catch (RestClientException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(

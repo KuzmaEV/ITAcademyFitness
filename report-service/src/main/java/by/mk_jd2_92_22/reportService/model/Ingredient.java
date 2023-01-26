@@ -1,19 +1,15 @@
 package by.mk_jd2_92_22.reportService.model;
 
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.util.UUID;
 
-@Entity
+//@Entity
 public class Ingredient {
 
-    @Id
+//    @Id
     private UUID uuid;
 
 
-    @ManyToOne
+//    @ManyToOne
     private Product product;
 
 

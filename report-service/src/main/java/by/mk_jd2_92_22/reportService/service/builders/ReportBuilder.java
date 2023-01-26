@@ -18,6 +18,7 @@ public class ReportBuilder {
     private String description;
     private ReportParams params;
     private UUID profileId;
+    private String email;
 
     public ReportBuilder() {
     }
@@ -62,6 +63,11 @@ public class ReportBuilder {
         return this;
     }
 
+    public ReportBuilder setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
     public static ReportBuilder create(){return new ReportBuilder();}
     public Report build(){
         return new Report(uuid,
@@ -71,6 +77,7 @@ public class ReportBuilder {
         type,
         description,
         params,
-        profileId);
+        profileId,
+        email);
     }
 }

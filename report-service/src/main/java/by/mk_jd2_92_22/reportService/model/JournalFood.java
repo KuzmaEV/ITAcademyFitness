@@ -1,35 +1,40 @@
 package by.mk_jd2_92_22.reportService.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+//@Entity
+//@Table(name = "journal_food_entry")
 public class JournalFood {
 
-    @Id
+//    @Id
     private UUID uuid;
 
-    @JsonProperty("dt_create")
+//    @JsonProperty("dt_create")
+//    @Column(name = "dt_create")
     private LocalDateTime dtCreate;
 
-    @JsonProperty("dt_update")
+//    @JsonProperty("dt_update")
+//    @Version
+//    @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
 
     @JsonProperty("dt_supply")
+//    @Column(name = "dt_supply")
     private LocalDateTime dtSupply;
 
+//    @ManyToOne
     private  Product product;
 
+//    @ManyToOne
     private Recipe dish;
 
     private int weight;
 
-    @JsonIgnore
+//    @JsonIgnore
     private UUID profile;
 
 

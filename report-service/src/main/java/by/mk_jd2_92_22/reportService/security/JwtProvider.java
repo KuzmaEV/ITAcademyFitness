@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Base64;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtProvider {
@@ -23,22 +25,22 @@ public class JwtProvider {
     }
 
 
-//    public String createToken(String username){
-//
-////        Claims claims = Jwts.claims().setSubject(username);
-////        claims.put("role", role);
-//        Date now = new Date();
-//        Date validity = new Date(now.getTime()+ TimeUnit.MINUTES.toMillis(validityToMilliseconds ));
+    public String createToken(String username){
 
-//        return Jwts.builder()
-////                .setClaims(claims)
-//                .setSubject(username)
-////                .setIssuer(jwtIssuer)
-//                .setIssuedAt(now)
-//                .setExpiration(validity)
-//                .signWith(SignatureAlgorithm.HS512, secretKey)
-//                .compact();
-//    }
+//        Claims claims = Jwts.claims().setSubject(username);
+//        claims.put("role", role);
+        Date now = new Date();
+        Date validity = new Date(now.getTime()+ TimeUnit.SECONDS.toMillis(validityToMilliseconds ));
+
+        return Jwts.builder()
+//                .setClaims(claims)
+                .setSubject(username)
+//                .setIssuer(jwtIssuer)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+    }
 
     public String getUsername(String token){
         return Jwts.parser()

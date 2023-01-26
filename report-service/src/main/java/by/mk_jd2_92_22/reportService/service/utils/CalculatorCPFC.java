@@ -10,9 +10,9 @@ import java.util.List;
 
 
 @Component
-public class CalculateCPFC {
+public class CalculatorCPFC {
 
-    public FoodCPFC productCPFC(Product product, double weight){
+    public FoodCPFC calculateProduct(Product product, double weight){
 
         final int productWeight = product.getWeight();
         final int calories = product.getCalories();
@@ -23,7 +23,7 @@ public class CalculateCPFC {
         return calculateCPFC(productWeight, calories, proteins, fats, carbohydrates, weight);
     }
 
-    public FoodCPFC recipeCPFC(Recipe recipe, double weight){
+    public FoodCPFC calculateRecipe(Recipe recipe, double weight){
 
         int productWeight = 0;
 
@@ -32,13 +32,12 @@ public class CalculateCPFC {
         double fats = 0;
         double carbohydrates = 0;
 
-        FoodCPFC foodCPFC = new FoodCPFC();
 
         final List<Ingredient> ingredients = recipe.getIngredients();
 
         for (Ingredient ingredient : ingredients) {
 
-            final FoodCPFC productCPFC = this.productCPFC(ingredient.getProduct(), ingredient.getWeight());
+            final FoodCPFC productCPFC = this.calculateProduct(ingredient.getProduct(), ingredient.getWeight());
 
             productWeight += ingredient.getWeight();
 
@@ -65,17 +64,25 @@ public class CalculateCPFC {
         } else { foodCPFC.setCalories(0);}
 
         if (proteins > 0){
-            foodCPFC.setProteins(proteins / (productWeight / weight ));
+            foodCPFC.setProteins(this.round(proteins / (productWeight / weight )));
         } else { foodCPFC.setProteins(0);}
 
         if (fats > 0){
-            foodCPFC.setFats(fats / (productWeight / weight ));
+            foodCPFC.setFats(this.round(fats / (productWeight / weight )));
         } else { foodCPFC.setFats(0);}
 
         if (carbohydrates > 0){
-            foodCPFC.setCarbohydrates(carbohydrates / (productWeight / weight ));
+            foodCPFC.setCarbohydrates(this.round(carbohydrates / (productWeight / weight )));
         } else { foodCPFC.setCarbohydrates(0);}
 
         return foodCPFC;
+    }
+
+    private double round(double value) {
+
+        long factor = (long) Math.pow(10, 2);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 }

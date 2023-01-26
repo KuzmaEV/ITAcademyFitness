@@ -1,6 +1,8 @@
 package by.mk_jd2_92_22.reportService.security;
 
 import by.mk_jd2_92_22.reportService.security.customDatail.CustomUserDetailsService;
+import by.mk_jd2_92_22.reportService.security.customDatail.entity.CustomUserDetails;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,8 +33,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
+                                    @NotNull HttpServletResponse response,
+                                    @NotNull FilterChain filterChain)
             throws ServletException, IOException {
 
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -61,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
 //            throw new JwtAuthenticationException("JWT expired or invalid");
 //        }
 
-        UserDetails userDetails = detailsService
+        CustomUserDetails userDetails = detailsService
                 .loadUserByUsername(token);
 
         UsernamePasswordAuthenticationToken

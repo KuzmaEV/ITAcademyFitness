@@ -20,6 +20,15 @@ services:
       - "82:80"
     networks:
       - fitness_ntwrk
+#  minio:
+#    build: minio
+#    image: fitness_minio:1.0.1
+#    restart: always
+#    environment:
+#      MINIO_ROOT_USER: minioadmin
+#      MINIO_ROOT_PASSWORD: minioadmin
+#    networks:
+#      - fitness_ntwrk
   swagger-ui:
     build: swagger-ui
     image: fitness_swagger-ui:1.0.0
@@ -30,22 +39,22 @@ services:
 
   product-service:
     build: product-service
-    image: fitness_product-service:1.0.27
+    image: fitness_product-service:1.0.29
     networks:
       - fitness_ntwrk
   user-service:
     build: user-service
-    image: fitness_user-service:1.0.22
+    image: fitness_user-service:1.0.23
     networks:
       - fitness_ntwrk
   audit-service:
     build: audit-service
-    image: fitness_audit-service:1.0.19
+    image: fitness_audit-service:1.0.23
     networks:
       - fitness_ntwrk
   report-service:
     build: report-service
-    image: fitness_report-service:1.0.6
+    image: fitness_report-service:1.0.36
     networks:
       - fitness_ntwrk
 

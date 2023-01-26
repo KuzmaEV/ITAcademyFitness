@@ -39,11 +39,14 @@ public class Report {
     @Column(name = "profile_id")
     private UUID profileId;
 
+    @JsonIgnore
+    private String email;
+
     public Report() {
     }
 
     public Report(UUID uuid, LocalDateTime dtCreate, LocalDateTime dtUpdate, Status status,
-                  ReportType type, String description, ReportParams params, UUID userId) {
+                  ReportType type, String description, ReportParams params, UUID profileId, String email) {
         this.uuid = uuid;
         this.dtCreate = dtCreate;
         this.dtUpdate = dtUpdate;
@@ -51,7 +54,8 @@ public class Report {
         this.type = type;
         this.description = description;
         this.params = params;
-        this.profileId = userId;
+        this.profileId = profileId;
+        this.email = email;
     }
 
     public UUID getUuid() {
@@ -112,6 +116,14 @@ public class Report {
         this.profileId = profileId;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "Report{" +
@@ -122,7 +134,8 @@ public class Report {
                 ", type=" + type +
                 ", description='" + description + '\'' +
                 ", params=" + params +
-                ", userId=" + profileId +
+                ", profileId=" + profileId +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

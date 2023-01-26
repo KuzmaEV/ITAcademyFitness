@@ -1,37 +1,35 @@
 package by.mk_jd2_92_22.reportService.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
+//@Entity
 public class Recipe {
 
-    @Id
+//    @Id
     private UUID uuid;
 
-    @JsonProperty("dt_create")
-    @Column(name = "dt_create")
+//    @JsonProperty("dt_create")
+//    @Column(name = "dt_create")
     private LocalDateTime dtCreate;
 
-    @Version
-    @JsonProperty("dt_update")
-    @Column(name = "dt_update")
+//    @Version
+//    @JsonProperty("dt_update")
+//    @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
 
     private String title;
 
     @JsonProperty("composition")
-    @OneToMany
-    @JoinColumn(name = "dish_uuid", referencedColumnName = "uuid")
+//    @OneToMany
+//    @JoinColumn(name = "dish_uuid", referencedColumnName = "uuid")
     private List<Ingredient> ingredients;
 
-    @JsonIgnore
-    @Column(name = "user_id")
+//    @JsonIgnore
+//    @Column(name = "user_id")
     private UUID userId;
 
     public Recipe() {

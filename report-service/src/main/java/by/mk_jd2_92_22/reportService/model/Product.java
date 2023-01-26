@@ -1,31 +1,24 @@
 package by.mk_jd2_92_22.reportService.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Version;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
+//@Entity
 public class Product {
 
-    @Id
+//    @Id
     private UUID uuid;
 
-    @JsonProperty("dt_create")
-    @Column(name = "dt_create")
+//    @JsonProperty("dt_create")
+//    @Column(name = "dt_create")
     private LocalDateTime dtCreate;
 
-    @Version
-    @JsonProperty("dt_update")
-    @Column(name = "dt_update")
+//    @Version
+//    @JsonProperty("dt_update")
+//    @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
 
-    @Column(length = 50)
+//    @Column(length = 50)
     private String title;
 
     private int calories;
@@ -35,8 +28,8 @@ public class Product {
 
     private int weight;
 
-    @JsonIgnore
-    @Column(name = "user_id")
+//    @JsonIgnore
+//    @Column(name = "user_id")
     private UUID userId;
 
     public Product() {

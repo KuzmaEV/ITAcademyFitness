@@ -1,9 +1,7 @@
 package by.mk_jd2_92_22.reportService.security.config;
 
 import by.mk_jd2_92_22.reportService.security.JwtFilter;
-import by.mk_jd2_92_22.reportService.security.customDatail.Role;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

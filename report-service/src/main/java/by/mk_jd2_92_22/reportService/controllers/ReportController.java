@@ -51,10 +51,12 @@ public class ReportController {
     }
 
     @GetMapping("/{uuid}/export")
-    public ResponseEntity< byte[]> get(@PathVariable UUID uuid,
+    public ResponseEntity< byte[]> export(@PathVariable UUID uuid,
                                       @RequestHeader(HttpHeaders.AUTHORIZATION) HttpHeaders token){
 
-        return ResponseEntity.ok(this.service.get(uuid, token));
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=" + uuid)
+                .body(this.service.export(uuid, token));
     }
 
 }

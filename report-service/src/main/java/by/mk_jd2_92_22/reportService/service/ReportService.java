@@ -1,7 +1,7 @@
 package by.mk_jd2_92_22.reportService.service;
 
 import by.mk_jd2_92_22.reportService.dto.ProfileDTO;
-import by.mk_jd2_92_22.reportService.service.api.IResponseReportService;
+import by.mk_jd2_92_22.reportService.minio.MinioService;
 import by.mk_jd2_92_22.reportService.service.builders.ReportBuilder;
 import by.mk_jd2_92_22.reportService.dto.PageDTO;
 import by.mk_jd2_92_22.reportService.dto.ReportParams;
@@ -14,8 +14,8 @@ import by.mk_jd2_92_22.reportService.security.customDatail.UserHolder;
 import by.mk_jd2_92_22.reportService.service.api.IReportService;
 import by.mk_jd2_92_22.reportService.service.exception.NoContentException;
 import by.mk_jd2_92_22.reportService.service.mappers.MapperPageDTO;
-import by.mk_jd2_92_22.reportService.service.utils.CreatingAudit;
-import by.mk_jd2_92_22.reportService.service.utils.GetFromAnotherService;
+import by.mk_jd2_92_22.reportService.service.utils.AuditProvider;
+import by.mk_jd2_92_22.reportService.service.utils.ProviderMicroservice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,21 +35,23 @@ public class ReportService implements IReportService {
 
     private final IReportRepository dao;
     private final UserHolder holder;
-    private final CreatingAudit creatingAudit;
+    private final AuditProvider auditProvider;
     private final MapperPageDTO<Report> mapperPageDTO;
-    private final GetFromAnotherService getFromAnotherService;
-    private final IResponseReportService responseReportService;
+    private final ProviderMicroservice getFromAnotherService;
+    private final MinioService minioComponent;
 
-    public ReportService(IReportRepository dao, UserHolder holder, CreatingAudit creatingAudit,
-                         MapperPageDTO<Report> mapperPageDTO, GetFromAnotherService getFromAnotherService,
-                         IResponseReportService responseReportService) {
+
+    public ReportService(IReportRepository dao, UserHolder holder, AuditProvider auditProvider,
+                         MapperPageDTO<Report> mapperPageDTO, ProviderMicroservice getFromAnotherService,
+                         MinioService minioComponent) {
         this.dao = dao;
         this.holder = holder;
-        this.creatingAudit = creatingAudit;
+        this.auditProvider = auditProvider;
         this.mapperPageDTO = mapperPageDTO;
         this.getFromAnotherService = getFromAnotherService;
-        this.responseReportService = responseReportService;
+        this.minioComponent = minioComponent;
     }
+
 
     @Override
     @Transactional
@@ -77,11 +80,12 @@ public class ReportService implements IReportService {
                 .setDescription(description)
                 .setParams(params)
                 .setProfileId(profile)
+                .setEmail(this.holder.getUser().getEmail())
                 .build();
 
-        final Report save = this.dao.save(report);
+        this.dao.save(report);
 
-        this.creatingAudit.create(userId, "new Report created", Type.REPORT, token);
+        this.auditProvider.create(userId, "new Report created", Type.REPORT, token);
     }
 
     @Override
@@ -98,7 +102,7 @@ public class ReportService implements IReportService {
             throw new IllegalStateException("Вам не принадлежит этот профиль");
         }
 
-        final Page<Report> reportPage = this.dao.findAllByprofileId(pageable, profileId);
+        final Page<Report> reportPage = this.dao.findAllByProfileId(pageable, profileId);
 
         return this.mapperPageDTO.mapper(reportPage);
     }
@@ -107,31 +111,83 @@ public class ReportService implements IReportService {
     @Transactional(readOnly = true)
     public void validation(UUID reportUuid, HttpHeaders token){
 
-//        final UUID userUuid = UUID.fromString(this.holder.getUser().getUsername());
+        final UUID userId = UUID.fromString(this.holder.getUser().getUsername());
 
 
         final Report report = this.dao.findByUuidAndStatus(reportUuid, Status.DONE).orElseThrow(() ->
                 new NoContentException("Сервер, по предоставленному uuid, не смог найти информацию"));
 
-//        final UUID profileId = report.getProfileId();
+        //TODO такая проверка норм?
+        final UUID profileId = report.getProfileId();//TODO создать метод ВалидПрофиль (холдер + эта хрень)
+        final ProfileDTO profileDTO = this.getFromAnotherService.getProfile(token, profileId);
+        final UUID userIdProfile = profileDTO.getUser().getUuid();
+        if (!userId.equals(userIdProfile)) {
+            throw new IllegalStateException("Вам не принадлежит этот профиль");
+        }
 
     }
 
     @Override
     @Transactional(readOnly = true)
-    public  byte[] get(UUID reportUuid, HttpHeaders token){
+    public  byte[] export(UUID reportUuid, HttpHeaders token){
 
-//        final UUID userUuid = UUID.fromString(this.holder.getUser().getUsername());
+        final UUID userId = UUID.fromString(this.holder.getUser().getUsername());
 
 
         final Report report = this.dao.findByUuidAndStatus(reportUuid, Status.DONE).orElseThrow(() ->
                 new NoContentException("Сервер, по предоставленному uuid, не смог найти информацию"));
 
-//        final UUID profileId = report.getProfileId();
+        final UUID profileId = report.getProfileId();
+        final ProfileDTO profileDTO = this.getFromAnotherService.getProfile(token, profileId);
+        final UUID userIdProfile = profileDTO.getUser().getUuid();
+        if (!userId.equals(userIdProfile)) {
+            throw new IllegalStateException("Вам не принадлежит этот профиль");
+        }
 
-
-        return this.responseReportService.generateReport(report, token);
+        final String nameFile = report.getUuid().toString();
+        return this.minioComponent.get(nameFile);
     }
 
+    @Override
+    @Transactional
+    public void updateStatus(UUID reportId, LocalDateTime dtUpdate, Status status){
+        Report report = this.dao.findById(reportId).orElseThrow(() ->
+                new IllegalArgumentException("Не удалось найти отчет при изменении статуса"));
 
+        if (!report.getDtUpdate().isEqual(dtUpdate)){
+            if (report.getStatus().equals(Status.PROGRESS)){
+                report.setStatus(Status.LOADED);
+                this.dao.save(report);
+            }
+            throw new IllegalArgumentException("Не совпадают версии обнавления");
+        }
+
+        report.setStatus(status);
+        this.dao.save(report);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Report getLoaded(){
+
+        Pageable pageable = PageRequest.of(0, 1, Sort.by("dtUpdate"));
+
+        Page<Report> reportPage = dao.findAllByStatus(Status.LOADED, pageable);
+
+        List<Report> content = reportPage.getContent();
+        if (!content.isEmpty()){
+            return content.get(0);
+        }
+        //TODO что делать с джобай, как остановить если пусто
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Report get(UUID reportId) {
+
+        return this.dao.findById(reportId).orElseThrow(() ->
+                new IllegalArgumentException("Ошибка при получении данный об отчете из БД"));
+    }
 }
