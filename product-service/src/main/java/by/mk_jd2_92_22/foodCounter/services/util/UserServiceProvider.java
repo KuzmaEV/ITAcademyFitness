@@ -12,12 +12,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.UUID;
 
 @Component
-public class GetUserFromUserService {
+public class UserServiceProvider {
 
     private final RestTemplate restTemplate;
     private final UserHolder holder;
 
-    public GetUserFromUserService(RestTemplate restTemplate, UserHolder holder) {
+    public UserServiceProvider(RestTemplate restTemplate, UserHolder holder) {
         this.restTemplate = restTemplate;
         this.holder = holder;
     }

@@ -2,7 +2,7 @@ package by.mk_jd2_92_22.foodCounter.security.customDatail;
 
 import by.mk_jd2_92_22.foodCounter.model.UserMe;
 import by.mk_jd2_92_22.foodCounter.security.customDatail.entity.CustomUserDetails;
-import by.mk_jd2_92_22.foodCounter.services.util.GetUserFromUserService;
+import by.mk_jd2_92_22.foodCounter.services.util.UserServiceProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
 
-    private final GetUserFromUserService getUser;
-    private final CreateCustomUserDetails createCustomUserDetails;
+    private final UserServiceProvider getUser;
+    private final CustomUserDetailsUtil createCustomUserDetails;
 
-    public CustomUserDetailsService(GetUserFromUserService getUser, CreateCustomUserDetails createCustomUserDetails) {
+    public CustomUserDetailsService(UserServiceProvider getUser, CustomUserDetailsUtil createCustomUserDetails) {
         this.getUser = getUser;
         this.createCustomUserDetails = createCustomUserDetails;
     }

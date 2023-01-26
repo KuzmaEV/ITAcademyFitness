@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class CreateCustomUserDetails {
+public class CustomUserDetailsUtil {
 
     public CustomUserDetails create(UserMe user){
 
