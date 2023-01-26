@@ -11,7 +11,7 @@ import by.mk_jd2_92_22.foodCounter.services.dto.ProfileResponseDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.Type;
 import by.mk_jd2_92_22.foodCounter.services.util.ConverterUtil;
 import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
-import by.mk_jd2_92_22.foodCounter.services.util.GetUserFromUserService;
+import by.mk_jd2_92_22.foodCounter.services.util.UserServiceProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +28,11 @@ import java.util.UUID;
 public class ProfileService implements IProfileService {
 
     private final ProfileRepository dao;
-    private final GetUserFromUserService getUser;
+    private final UserServiceProvider getUser;
     private final CreatingAudit creatingAudit;
     private final ConverterUtil converterUtil;
 
-    public ProfileService(ProfileRepository dao, GetUserFromUserService getUser,
+    public ProfileService(ProfileRepository dao, UserServiceProvider getUser,
                           CreatingAudit creatingAudit, ConverterUtil converterUtil) {
         this.dao = dao;
         this.getUser = getUser;
