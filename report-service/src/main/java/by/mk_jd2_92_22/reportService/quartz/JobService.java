@@ -1,7 +1,7 @@
 package by.mk_jd2_92_22.reportService.quartz;
 
 import by.mk_jd2_92_22.reportService.minio.MinioService;
-import by.mk_jd2_92_22.reportService.minio.ReportHandler;
+import by.mk_jd2_92_22.reportService.service.ReportHandler;
 import by.mk_jd2_92_22.reportService.model.Report;
 import by.mk_jd2_92_22.reportService.model.Status;
 import by.mk_jd2_92_22.reportService.service.api.IReportService;
@@ -19,6 +19,7 @@ public class JobService {
         this.reportHandler = reportHandler;
         this.minioComponent = minioComponent;
     }
+
 
     public void handleReport(){
 

@@ -1,6 +1,6 @@
 package by.mk_jd2_92_22.auditService.service.mappers;
 
-import by.mk_jd2_92_22.auditService.dto.PageDTO;
+import by.mk_jd2_92_22.auditService.service.dto.PageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 

@@ -11,7 +11,7 @@ import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.RecipeDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.Type;
 import by.mk_jd2_92_22.foodCounter.services.mappers.MapperPageDTO;
-import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
+import by.mk_jd2_92_22.foodCounter.services.util.AuditProvider;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -31,11 +31,11 @@ public class RecipeService implements IRecipeService {
     private final IRecipeDao dao;
     private final IIngredientService ingredientService;
     private final MapperPageDTO<Recipe> mapperPageDTO;
-    private final CreatingAudit creatingAudit;
+    private final AuditProvider creatingAudit;
     private final UserHolder holder;
 
     public RecipeService(IRecipeDao dao, IIngredientService ingredientService,
-                         MapperPageDTO<Recipe> mapperPageDTO, CreatingAudit creatingAudit,
+                         MapperPageDTO<Recipe> mapperPageDTO, AuditProvider creatingAudit,
                          UserHolder holder) {
         this.dao = dao;
         this.ingredientService = ingredientService;

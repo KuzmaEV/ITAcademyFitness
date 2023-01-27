@@ -21,6 +21,8 @@ public class MinioConfig {
     private String accessKey;
     @Value("${minio.access.secret}")
     private String secretKey;
+    @Value("${minio.bucket.name}")
+    private String bucketName;
 
 
     @Bean
@@ -39,14 +41,14 @@ public class MinioConfig {
                             .credentials("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG")
                             .build();
 
-            // Make 'asiatrip' bucket if not exist.
+            // Make 'bucketName' bucket if not exist.
             boolean found =
-                    minioClient.bucketExists(BucketExistsArgs.builder().bucket("asiatrip").build());
+                    minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (!found) {
-                // Make a new bucket called 'asiatrip'.
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket("asiatrip").build());
+                // Make a new bucket called 'bucketName'.
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             } else {
-                System.out.println("Bucket 'asiatrip' already exists.");
+                System.out.println("Bucket '" + bucketName + "' already exists.");
             }
 
             return minioClient;

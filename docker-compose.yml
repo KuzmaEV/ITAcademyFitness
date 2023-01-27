@@ -44,7 +44,7 @@ services:
       - fitness_ntwrk
   user-service:
     build: user-service
-    image: fitness_user-service:1.0.23
+    image: fitness_user-service:1.0.28
     networks:
       - fitness_ntwrk
   audit-service:

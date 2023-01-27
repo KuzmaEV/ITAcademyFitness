@@ -1,7 +1,7 @@
 package by.mk_jd2_92_22.reportService.controllers;
 
-import by.mk_jd2_92_22.reportService.dto.PageDTO;
-import by.mk_jd2_92_22.reportService.dto.ReportParams;
+import by.mk_jd2_92_22.reportService.service.dto.PageDTO;
+import by.mk_jd2_92_22.reportService.service.dto.ReportParams;
 import by.mk_jd2_92_22.reportService.model.Report;
 import by.mk_jd2_92_22.reportService.model.ReportType;
 import by.mk_jd2_92_22.reportService.service.api.IReportService;

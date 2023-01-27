@@ -15,7 +15,7 @@ import by.mk_jd2_92_22.foodCounter.services.dto.JournalFoodDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.PageDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.Type;
 import by.mk_jd2_92_22.foodCounter.services.mappers.MapperPageDTO;
-import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
+import by.mk_jd2_92_22.foodCounter.services.util.AuditProvider;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,11 +38,11 @@ public class JournalFoodService implements IJournalFoodService {
     private final MapperPageDTO<JournalFood> mapperPageDTO;
     private final IProfileService profileService;
     private final UserHolder holder;
-    private final CreatingAudit creatingAudit;
+    private final AuditProvider creatingAudit;
 
     public JournalFoodService(IJournalFoodDao dao, IProductService productService,
                               IRecipeService dishService, MapperPageDTO<JournalFood> mapperPageDTO,
-                              IProfileService profileService, UserHolder holder, CreatingAudit creatingAudit) {
+                              IProfileService profileService, UserHolder holder, AuditProvider creatingAudit) {
         this.dao = dao;
         this.productService = productService;
         this.dishService = dishService;

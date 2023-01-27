@@ -1,68 +1,35 @@
 package by.mk_jd2_92_22.userSecurity.services;
 
-import by.mk_jd2_92_22.userSecurity.model.dto.RegistrationDTO;
-import by.mk_jd2_92_22.userSecurity.repositories.UserFullRepository;
 import by.mk_jd2_92_22.userSecurity.model.*;
-import by.mk_jd2_92_22.userSecurity.model.builder.MyUserBuilder;
 import by.mk_jd2_92_22.userSecurity.model.dto.LoginDTO;
 import by.mk_jd2_92_22.userSecurity.security.JwtProvider;
 import by.mk_jd2_92_22.userSecurity.services.api.IAccountService;
-import by.mk_jd2_92_22.userSecurity.services.util.CreatingAudit;
+import by.mk_jd2_92_22.userSecurity.services.api.IUserService;
+import by.mk_jd2_92_22.userSecurity.services.util.AuditProvider;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
 public class AccountService implements IAccountService {
 
     private final JwtProvider jwtProvider;
-    private final UserFullRepository dao;
+    private final IUserService userService;
     private final PasswordEncoder encoder;
     private final UserHolder holder;
-    private final CreatingAudit createAudit;
+    private final AuditProvider createAudit;
 
-    public AccountService(JwtProvider jwtProvider, UserFullRepository dao,
-                          PasswordEncoder encoder, UserHolder holder, CreatingAudit createAudit) {
+    public AccountService(JwtProvider jwtProvider, IUserService userService, PasswordEncoder encoder,
+                          UserHolder holder, AuditProvider createAudit) {
         this.jwtProvider = jwtProvider;
-        this.dao = dao;
+        this.userService = userService;
         this.encoder = encoder;
         this.holder = holder;
         this.createAudit = createAudit;
-    }
-
-
-    @Override
-    @Transactional
-    public void registration(RegistrationDTO item){
-
-        if (this.dao.existsByMail(item.getMail())){
-            throw new IllegalStateException("Пользователь с таким email уже существует");
-        }
-
-        final LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
-        final UUID uuid = UUID.randomUUID();
-
-        UserFull user = MyUserBuilder.create().setUuid(uuid)
-                .setDtCreate(now)
-                .setDtUpdate(now)
-                .setMail(item.getMail())
-                .setNick(item.getNick())
-                .setRole(Role.USER)
-                .setStatus(Status.WAITING_ACTIVATION)
-                .setPassword(this.encoder.encode(item.getPassword()))
-                .build();
-
-//TODO подтверждение регистрации через email
-        this.dao.save(user);
-
-
     }
 
     @Override
@@ -70,7 +37,7 @@ public class AccountService implements IAccountService {
     public String login(LoginDTO dto){
 
 
-        final UserFull user = this.dao.findByMail(dto.getMail()).orElseThrow(() ->
+        final UserFull user = this.userService.findByMail(dto.getMail()).orElseThrow(() ->
                 new IllegalStateException("Неверный логин или пароль"));
 
         //Проверяем пороль
@@ -93,7 +60,7 @@ public class AccountService implements IAccountService {
     public UserMe me(){
 
         final UserDetails userDetails = this.holder.getUser();
-        final UserFull myUser = this.dao.findByMail(userDetails.getUsername()).orElseThrow(() ->
+        final UserFull myUser = this.userService.findByMail(userDetails.getUsername()).orElseThrow(() ->
                 new UsernameNotFoundException("User не найден"));
 
         return new UserMe(myUser.getUuid(),

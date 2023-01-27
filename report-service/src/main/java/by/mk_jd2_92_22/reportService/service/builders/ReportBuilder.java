@@ -1,6 +1,6 @@
 package by.mk_jd2_92_22.reportService.service.builders;
 
-import by.mk_jd2_92_22.reportService.dto.ReportParams;
+import by.mk_jd2_92_22.reportService.service.dto.ReportParams;
 import by.mk_jd2_92_22.reportService.model.Report;
 import by.mk_jd2_92_22.reportService.model.Status;
 import by.mk_jd2_92_22.reportService.model.ReportType;

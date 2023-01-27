@@ -20,27 +20,10 @@ public class LoginController {
         this.service = service;
     }
 
-    @PostMapping("/registration")
-    ResponseEntity<?> registration(@Valid @RequestBody RegistrationDTO dto){
-
-        service.registration(dto);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
     @PostMapping("/login")
-    ResponseEntity<String> login(@Valid @RequestBody LoginDTO dto){
+    ResponseEntity<String> login(@Valid @RequestBody LoginDTO dto) {
 
         return ResponseEntity.ok(service.login(dto));
-
-//возвращает токен в хедере
-//        final String token = service.login(dto);
-//
-//        HttpHeaders responseHeaders = new HttpHeaders();
-//        responseHeaders.set("Authorization",token);
-//
-//        return ResponseEntity.ok()
-//                .headers(responseHeaders)
-//                .body("response header");
     }
 
     @GetMapping("/me")
@@ -49,10 +32,4 @@ public class LoginController {
         return ResponseEntity.ok(service.me());
     }
 
-    //TODO сделать logout
-//    @PostMapping("/logout")
-//    public void authenticate(HttpServletRequest request, HttpServletResponse response){
-//        SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
-//        securityContextLogoutHandler.logout(request, response, null);
-//    }
 }

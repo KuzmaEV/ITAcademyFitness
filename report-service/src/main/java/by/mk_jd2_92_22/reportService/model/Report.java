@@ -1,6 +1,6 @@
 package by.mk_jd2_92_22.reportService.model;
 
-import by.mk_jd2_92_22.reportService.dto.ReportParams;
+import by.mk_jd2_92_22.reportService.service.dto.ReportParams;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

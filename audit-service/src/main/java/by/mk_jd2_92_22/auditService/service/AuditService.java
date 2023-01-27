@@ -1,8 +1,8 @@
 package by.mk_jd2_92_22.auditService.service;
 
-import by.mk_jd2_92_22.auditService.exception.NotFoundException;
-import by.mk_jd2_92_22.auditService.dto.AuditRequestDTO;
-import by.mk_jd2_92_22.auditService.dto.PageDTO;
+import by.mk_jd2_92_22.auditService.service.exception.NotFoundException;
+import by.mk_jd2_92_22.auditService.service.dto.AuditRequestDTO;
+import by.mk_jd2_92_22.auditService.service.dto.PageDTO;
 import by.mk_jd2_92_22.auditService.model.UserAudit;
 import by.mk_jd2_92_22.auditService.repository.AuditRepository;
 import by.mk_jd2_92_22.auditService.model.Audit;

@@ -12,6 +12,7 @@ public class UserFull {
 
     @Column(name = "dt_create")
     private LocalDateTime dtCreate;
+    @Version
     @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
     @Column(name = "mail")

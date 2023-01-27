@@ -1,7 +1,7 @@
 package by.mk_jd2_92_22.reportService.service.utils;
 
 import by.mk_jd2_92_22.reportService.model.JournalFoodDTO;
-import by.mk_jd2_92_22.reportService.dto.ProfileDTO;
+import by.mk_jd2_92_22.reportService.service.dto.ProfileDTO;
 import by.mk_jd2_92_22.reportService.model.JournalFood;
 import by.mk_jd2_92_22.reportService.model.Report;
 import by.mk_jd2_92_22.reportService.security.JwtProvider;

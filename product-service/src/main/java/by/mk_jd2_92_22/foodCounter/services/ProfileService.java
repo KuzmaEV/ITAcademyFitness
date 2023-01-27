@@ -10,7 +10,7 @@ import by.mk_jd2_92_22.foodCounter.services.dto.ProfileDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.ProfileResponseDTO;
 import by.mk_jd2_92_22.foodCounter.services.dto.Type;
 import by.mk_jd2_92_22.foodCounter.services.util.ConverterUtil;
-import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
+import by.mk_jd2_92_22.foodCounter.services.util.AuditProvider;
 import by.mk_jd2_92_22.foodCounter.services.util.UserServiceProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,11 +29,11 @@ public class ProfileService implements IProfileService {
 
     private final ProfileRepository dao;
     private final UserServiceProvider getUser;
-    private final CreatingAudit creatingAudit;
+    private final AuditProvider creatingAudit;
     private final ConverterUtil converterUtil;
 
     public ProfileService(ProfileRepository dao, UserServiceProvider getUser,
-                          CreatingAudit creatingAudit, ConverterUtil converterUtil) {
+                          AuditProvider creatingAudit, ConverterUtil converterUtil) {
         this.dao = dao;
         this.getUser = getUser;
         this.creatingAudit = creatingAudit;
@@ -76,7 +76,7 @@ public class ProfileService implements IProfileService {
 
 
         final Profile profile = this.dao.findById(profileId).orElseThrow(() ->
-                new IllegalArgumentException("Profile is not found"));
+                new IllegalArgumentException("Такого профеля не сууществует"));
 
         if(!profile.getUser().equals(userProfile.getUuid())){
             throw new IllegalStateException("Нельзя получит данные чужого пользователя");
@@ -105,7 +105,7 @@ public class ProfileService implements IProfileService {
         final UserProfile userProfile = this.getUser.getUserProfileHolder();
 
         Profile profile = this.dao.findById(uuid).orElseThrow(() ->
-                new IllegalArgumentException("Profile is not found"));
+                new IllegalArgumentException("Такого профеля не сууществует"));
 
         if (!userProfile.getUuid().equals(profile.getUser())){
             throw new IllegalStateException("Нельзя редоктировать чужие профили");
@@ -139,7 +139,7 @@ public class ProfileService implements IProfileService {
         final UserProfile userProfileHolder = this.getUser.getUserProfileHolder();
 
         Profile profile = this.dao.findById(uuid).orElseThrow(() ->
-                new IllegalArgumentException("Profile is not found"));
+                new IllegalArgumentException("Такого профеля не сууществует"));
 
         if (!profile.getUser().equals(userProfileHolder.getUuid())){
             throw new IllegalStateException("Нельзя удалять чужие профили");

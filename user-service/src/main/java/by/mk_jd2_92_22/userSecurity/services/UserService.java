@@ -10,7 +10,7 @@ import by.mk_jd2_92_22.userSecurity.model.dto.PageDTO;
 import by.mk_jd2_92_22.userSecurity.services.api.IUserService;
 import by.mk_jd2_92_22.userSecurity.services.mappers.PageDTOMapper;
 import by.mk_jd2_92_22.userSecurity.services.mappers.UserMeMapper;
-import by.mk_jd2_92_22.userSecurity.services.util.CreatingAudit;
+import by.mk_jd2_92_22.userSecurity.services.util.AuditProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,22 +32,20 @@ public class UserService implements IUserService {
 
     private final UserFullRepository dao;
     private final UserMeMapper mapperUser;
-    private final CreatingAudit creatingAudit;
+    private final AuditProvider auditProvider;
     private final PageDTOMapper<UserMe> pageDTOMapper;
-    private final AccountService accountService;
+    private final UserHolder holder;
     private final PasswordEncoder encoder;
 
-    public UserService(UserFullRepository dao, UserMeMapper mapperUser, CreatingAudit creatingAudit,
-                       PageDTOMapper<UserMe> pageDTOMapper, AccountService accountService,
-                       PasswordEncoder encoder) {
+    public UserService(UserFullRepository dao, UserMeMapper mapperUser, AuditProvider auditProvider,
+                       PageDTOMapper<UserMe> pageDTOMapper, UserHolder holder, PasswordEncoder encoder) {
         this.dao = dao;
         this.mapperUser = mapperUser;
-        this.creatingAudit = creatingAudit;
+        this.auditProvider = auditProvider;
         this.pageDTOMapper = pageDTOMapper;
-        this.accountService = accountService;
+        this.holder = holder;
         this.encoder = encoder;
     }
-
 
     @Override
     @Transactional
@@ -73,7 +72,7 @@ public class UserService implements IUserService {
 
         final UserFull userFull = dao.save(user);
 
-        this.creatingAudit.create(userFull.getUuid(), "new User created", token);
+        this.auditProvider.create(userFull.getUuid(), "new User created", token);
 
         return this.mapperUser.mapper(userFull);
     }
@@ -81,7 +80,7 @@ public class UserService implements IUserService {
     @Override
     public UserMe get(UUID uuid) {
         final UserFull userFull = dao.findById(uuid).orElseThrow(() ->
-                new UsernameNotFoundException("User not found"));
+                new UsernameNotFoundException("Пользователь не найден"));
         return this.mapperUser.mapper(userFull);
     }
 
@@ -104,8 +103,11 @@ public class UserService implements IUserService {
         UserFull user = this.dao.findById(uuid).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
 
-        final UUID uuidAdmin = this.accountService.me().getUuid();
-        this.creatingAudit.create(uuidAdmin, "Update user: " + user.getMail(),
+        String mail = this.holder.getUser().getUsername();
+        UserFull admin = this.dao.findByMail(mail).orElseThrow(() ->
+                new IllegalArgumentException("Ошибка при получении пользОвателя"));
+
+        this.auditProvider.create(admin.getUuid(), "Update user: " + user.getMail(),
                 token);
 
         final LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
@@ -125,5 +127,10 @@ public class UserService implements IUserService {
 
         this.dao.save(user);
 
+    }
+
+    @Override
+    public Optional<UserFull> findByMail(String mail){
+        return this.dao.findByMail(mail);
     }
 }

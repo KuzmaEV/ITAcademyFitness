@@ -23,6 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String mail) throws UsernameNotFoundException {
 
+
         UserFull user = dao.findByMail(mail).orElseThrow(() ->
         new UsernameNotFoundException("Unknown User: " + mail));
 

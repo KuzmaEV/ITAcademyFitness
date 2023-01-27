@@ -1,7 +1,7 @@
 package by.mk_jd2_92_22.reportService.service.utils;
 
-import by.mk_jd2_92_22.reportService.dto.AuditDTO;
-import by.mk_jd2_92_22.reportService.dto.Type;
+import by.mk_jd2_92_22.reportService.service.dto.AuditDTO;
+import by.mk_jd2_92_22.reportService.service.dto.Type;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;

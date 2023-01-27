@@ -8,7 +8,7 @@ import by.mk_jd2_92_22.foodCounter.security.customDatail.UserHolder;
 import by.mk_jd2_92_22.foodCounter.services.api.IProductService;
 import by.mk_jd2_92_22.foodCounter.services.dto.*;
 import by.mk_jd2_92_22.foodCounter.services.mappers.MapperPageDTO;
-import by.mk_jd2_92_22.foodCounter.services.util.CreatingAudit;
+import by.mk_jd2_92_22.foodCounter.services.util.AuditProvider;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -26,10 +26,10 @@ public class ProductService implements IProductService {
     private final IProductDao dao;
     private final MapperPageDTO<Product> mapperPageDTO;
     private final UserHolder holder;
-    private final CreatingAudit creatingAudit;
+    private final AuditProvider creatingAudit;
 
     public ProductService(IProductDao dao, MapperPageDTO<Product> mapperPageDTO,
-                          UserHolder holder, CreatingAudit creatingAudit) {
+                          UserHolder holder, AuditProvider creatingAudit) {
         this.dao = dao;
         this.mapperPageDTO = mapperPageDTO;
         this.holder = holder;

@@ -1,6 +1,6 @@
 package by.mk_jd2_92_22.reportService.service.mappers;
 
-import by.mk_jd2_92_22.reportService.dto.PageDTO;
+import by.mk_jd2_92_22.reportService.service.dto.PageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 

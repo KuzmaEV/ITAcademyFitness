@@ -1,6 +1,6 @@
 package by.mk_jd2_92_22.auditService.security.customDatail;
 
-import by.mk_jd2_92_22.auditService.service.util.CreateHeaderFromToken;
+import by.mk_jd2_92_22.auditService.service.util.HeaderFromTokenUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,9 +16,9 @@ import org.springframework.web.client.RestTemplate;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final RestTemplate restTemplate;
-    private final CreateHeaderFromToken createHeader;
+    private final HeaderFromTokenUtil createHeader;
 
-    public CustomUserDetailsService(RestTemplate restTemplate, CreateHeaderFromToken createHeader) {
+    public CustomUserDetailsService(RestTemplate restTemplate, HeaderFromTokenUtil createHeader) {
         this.restTemplate = restTemplate;
         this.createHeader = createHeader;
     }
